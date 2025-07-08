@@ -1,15 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 
+interface Citat {
+  id: number
+  text: string
+  autor: string | null
+  created_at: string
+}
+
 export default function Home() {
-  const [citaty, setCitaty] = useState([])
-  const [aktualniCitat, setAktualniCitat] = useState(null)
+  const [citaty, setCitaty] = useState<Citat[]>([])
+  const [aktualniCitat, setAktualniCitat] = useState<Citat | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Zobrazení náhodného citátu
+  const zobrazNahodnyC = useCallback((citatyArray: Citat[] = citaty) => {
+    if (citatyArray.length > 0) {
+      const nahodnyIndex = Math.floor(Math.random() * citatyArray.length)
+      setAktualniCitat(citatyArray[nahodnyIndex])
+    }
+  }, [citaty])
+
   // Načtení všech citátů z databáze
-  const nactiCitaty = async () => {
+  const nactiCitaty = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('citaty')
@@ -17,29 +32,22 @@ export default function Home() {
       
       if (error) throw error
       
-      setCitaty(data || [])
-      if (data && data.length > 0) {
-        zobrazNahodnyC(data)
+      const citatyData = data as Citat[] || []
+      setCitaty(citatyData)
+      if (citatyData && citatyData.length > 0) {
+        zobrazNahodnyC(citatyData)
       }
     } catch (error) {
       console.error('Chyba při načítání citátů:', error)
     } finally {
       setLoading(false)
     }
-  }
-
-  // Zobrazení náhodného citátu
-  const zobrazNahodnyC = (citatyArray = citaty) => {
-    if (citatyArray.length > 0) {
-      const nahodnyIndex = Math.floor(Math.random() * citatyArray.length)
-      setAktualniCitat(citatyArray[nahodnyIndex])
-    }
-  }
+  }, [zobrazNahodnyC])
 
   // Načtení citátů při prvním načtení
   useEffect(() => {
     nactiCitaty()
-  }, [])
+  }, [nactiCitaty])
 
   if (loading) {
     return (
