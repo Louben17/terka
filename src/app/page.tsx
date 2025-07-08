@@ -72,7 +72,7 @@ export default function Home() {
         {aktualniCitat && (
           <div className="transition-all duration-1000 ease-in-out">
             <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
-              "{aktualniCitat.text}"
+              &ldquo;{aktualniCitat.text}&rdquo;
             </blockquote>
             
             {aktualniCitat.autor && (
