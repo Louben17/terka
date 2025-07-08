@@ -27,7 +27,7 @@ export default function Home() {
   const nactiCitaty = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('citaty')
+        .from('terka')
         .select('*')
       
       if (error) throw error
