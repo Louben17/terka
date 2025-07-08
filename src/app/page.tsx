@@ -21,7 +21,7 @@ export default function Home() {
       const nahodnyIndex = Math.floor(Math.random() * citatyArray.length)
       setAktualniCitat(citatyArray[nahodnyIndex])
     }
-  }, [citaty])
+  }, []) // Prázdné závislosti - funkce se nevytváří znovu
 
   // Načtení všech citátů z databáze
   const nactiCitaty = useCallback(async () => {
@@ -42,7 +42,7 @@ export default function Home() {
     } finally {
       setLoading(false)
     }
-  }, [zobrazNahodnyC])
+  }, []) // Prázdné závislosti
 
   // Načtení citátů při prvním načtení
   useEffect(() => {
