@@ -49,45 +49,46 @@ export default function Home() {
     nactiCitaty()
   }, [nactiCitaty])
 
+
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Načítám tipy...</p>
+          <div className="animate-pulse text-gray-400 text-lg font-serif">
+            Načítám...
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">
-            🏠 Úklidové tipy pro domácnost
-          </h1>
-          
-          {aktualniCitat && (
-            <div className="mb-8">
-              <div className="bg-indigo-50 rounded-lg p-6 mb-6">
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  {aktualniCitat.text}
-                </p>
-              </div>
-              
-              <button 
-                onClick={() => zobrazNahodnyC()}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105"
-              >
-                ✨ Další tip
-              </button>
-            </div>
-          )}
-          
-          <div className="text-sm text-gray-500 mt-8">
-            Celkem tipů: {citaty.length}
+    <div 
+      className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8 cursor-pointer"
+      onClick={() => window.location.reload()}
+    >
+      <div className="max-w-4xl w-full text-center">
+        {aktualniCitat && (
+          <div className="transition-all duration-1000 ease-in-out">
+            <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
+              "{aktualniCitat.text}"
+            </blockquote>
+            
+            {aktualniCitat.autor && (
+              <cite className="text-lg md:text-xl font-serif text-gray-500 not-italic">
+                — {aktualniCitat.autor}
+              </cite>
+            )}
           </div>
+        )}
+        
+        <div className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
+          Klikni kamkoliv pro nový citát
+        </div>
+        
+        <div className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
+          {citaty.length} citátů
         </div>
       </div>
     </div>
