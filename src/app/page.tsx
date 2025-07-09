@@ -64,12 +64,17 @@ export default function Home() {
     nactiCitaty()
   }, [nactiCitaty])
 
-  const handleClick = () => {
-    if (isMobile) {
-      window.location.reload()
-    } else {
-      setShowModal(true)
-    }
+  const handleMainClick = () => {
+    window.location.reload()
+  }
+
+  const handleInfoClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setShowModal(true)
+  }
+
+  const handleModalClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
   }
 
   const closeModal = () => {
@@ -92,7 +97,7 @@ export default function Home() {
     <>
       <div 
         className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8 cursor-pointer"
-        onClick={handleClick}
+        onClick={handleMainClick}
       >
         <div className="max-w-4xl w-full text-center">
           {aktualniCitat && (
@@ -110,23 +115,20 @@ export default function Home() {
           )}
           
           <div className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
-            {isMobile ? 'Klikni pro nový citát' : 'Klikni pro více informací'}
+            Klikni pro nový citát
           </div>
           
           <div className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
             {citaty.length} citátů
           </div>
 
-          {/* Desktop - tlačítko pro nový citát */}
+          {/* Desktop - tlačítko pro více informací */}
           {!isMobile && (
             <button
-              onClick={(e) => {
-                e.stopPropagation()
-                window.location.reload()
-              }}
-              className="fixed top-8 right-8 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full p-3 text-gray-600 hover:bg-white/30 transition-all duration-200 text-sm font-serif"
+              onClick={handleInfoClick}
+              className="fixed top-8 right-8 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-200 text-sm font-serif"
             >
-              Nový citát
+              Více informací
             </button>
           )}
         </div>
@@ -134,11 +136,17 @@ export default function Home() {
 
       {/* Modal pro desktop */}
       {showModal && !isMobile && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          onClick={closeModal}
+        >
+          <div 
+            className="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-100"
+            onClick={handleModalClick}
+          >
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <X size={24} />
             </button>
