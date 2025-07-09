@@ -16,19 +16,6 @@ export default function Home() {
   const [aktualniCitat, setAktualniCitat] = useState<Citat | null>(null)
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  // Detekce mobilního zařízení
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    
-    checkIfMobile()
-    window.addEventListener('resize', checkIfMobile)
-    
-    return () => window.removeEventListener('resize', checkIfMobile)
-  }, [])
 
   // Zobrazení náhodného citátu
   const zobrazNahodnyC = useCallback((citatyArray: Citat[] = citaty) => {
@@ -36,7 +23,7 @@ export default function Home() {
       const nahodnyIndex = Math.floor(Math.random() * citatyArray.length)
       setAktualniCitat(citatyArray[nahodnyIndex])
     }
-  }, [])
+  }, [citaty])
 
   // Načtení všech citátů z databáze
   const nactiCitaty = useCallback(async () => {
@@ -57,7 +44,7 @@ export default function Home() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [zobrazNahodnyC])
 
   // Načtení citátů při prvním načtení
   useEffect(() => {
