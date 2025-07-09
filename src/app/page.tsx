@@ -122,20 +122,30 @@ export default function Home() {
             {citaty.length} citátů
           </div>
 
-          {/* Desktop - tlačítko pro více informací */}
-          {!isMobile && (
+          {/* Tlačítka pro více informací a Instagram */}
+          <div className="fixed top-8 right-8 flex items-center gap-3">
             <button
               onClick={handleInfoClick}
-              className="fixed top-8 right-8 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-200 text-sm font-serif"
+              className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-200 text-sm font-serif"
             >
               Více informací
             </button>
-          )}
+            
+            <a
+              href="https://www.instagram.com/uklidovaguru/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full p-2 text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-200"
+            >
+              <Instagram size={20} />
+            </a>
+          </div>
         </div>
       </div>
 
-      {/* Modal pro desktop */}
-      {showModal && !isMobile && (
+      {/* Modal pro desktop i mobil */}
+      {showModal && (
         <div 
           className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           onClick={closeModal}
