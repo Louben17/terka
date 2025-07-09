@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { Instagram, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 interface Citat {
@@ -14,6 +15,20 @@ export default function Home() {
   const [citaty, setCitaty] = useState<Citat[]>([])
   const [aktualniCitat, setAktualniCitat] = useState<Citat | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Detekce mobilního zařízení
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkIfMobile()
+    window.addEventListener('resize', checkIfMobile)
+    
+    return () => window.removeEventListener('resize', checkIfMobile)
+  }, [])
 
   // Zobrazení náhodného citátu
   const zobrazNahodnyC = useCallback((citatyArray: Citat[] = citaty) => {
@@ -21,7 +36,7 @@ export default function Home() {
       const nahodnyIndex = Math.floor(Math.random() * citatyArray.length)
       setAktualniCitat(citatyArray[nahodnyIndex])
     }
-  }, []) // Prázdné závislosti - funkce se nevytváří znovu
+  }, [])
 
   // Načtení všech citátů z databáze
   const nactiCitaty = useCallback(async () => {
@@ -42,14 +57,24 @@ export default function Home() {
     } finally {
       setLoading(false)
     }
-  }, []) // Prázdné závislosti
+  }, [])
 
   // Načtení citátů při prvním načtení
   useEffect(() => {
     nactiCitaty()
   }, [nactiCitaty])
 
+  const handleClick = () => {
+    if (isMobile) {
+      window.location.reload()
+    } else {
+      setShowModal(true)
+    }
+  }
 
+  const closeModal = () => {
+    setShowModal(false)
+  }
 
   if (loading) {
     return (
@@ -64,33 +89,98 @@ export default function Home() {
   }
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8 cursor-pointer"
-      onClick={() => window.location.reload()}
-    >
-      <div className="max-w-4xl w-full text-center">
-        {aktualniCitat && (
-          <div className="transition-all duration-1000 ease-in-out">
-            <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
-              &ldquo;{aktualniCitat.text}&rdquo;
-            </blockquote>
-            
-            {aktualniCitat.autor && (
-              <cite className="text-lg md:text-xl font-serif text-gray-500 not-italic">
-                — {aktualniCitat.autor}
-              </cite>
-            )}
+    <>
+      <div 
+        className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8 cursor-pointer"
+        onClick={handleClick}
+      >
+        <div className="max-w-4xl w-full text-center">
+          {aktualniCitat && (
+            <div className="transition-all duration-1000 ease-in-out">
+              <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
+                &ldquo;{aktualniCitat.text}&rdquo;
+              </blockquote>
+              
+              {aktualniCitat.autor && (
+                <cite className="text-lg md:text-xl font-serif text-gray-500 not-italic">
+                  — {aktualniCitat.autor}
+                </cite>
+              )}
+            </div>
+          )}
+          
+          <div className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
+            {isMobile ? 'Klikni pro nový citát' : 'Klikni pro více informací'}
           </div>
-        )}
-        
-        <div className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
-          Klikni kamkoliv pro nový citát
-        </div>
-        
-        <div className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
-          {citaty.length} citátů
+          
+          <div className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
+            {citaty.length} citátů
+          </div>
+
+          {/* Desktop - tlačítko pro nový citát */}
+          {!isMobile && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                window.location.reload()
+              }}
+              className="fixed top-8 right-8 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full p-3 text-gray-600 hover:bg-white/30 transition-all duration-200 text-sm font-serif"
+            >
+              Nový citát
+            </button>
+          )}
         </div>
       </div>
-    </div>
+
+      {/* Modal pro desktop */}
+      {showModal && !isMobile && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="text-center mb-6">
+              <h2 className="text-3xl font-serif text-gray-800 mb-4">
+                🌿 Úklidová Guru
+              </h2>
+              
+              <div className="text-lg font-serif text-gray-700 leading-relaxed space-y-4">
+                <p className="font-semibold">
+                  Vítejte na místě, kde se úklid, ekologie a radost z pořádku setkávají v dokonalé harmonii.
+                </p>
+                
+                <p>
+                  Jsem Tereza a mám vášeň pro úklidová videa, zkoumání složení čisticích prostředků a hledání způsobů, jak udržet domov čistý s minimálním dopadem na přírodu. Nejsem perfektní hospodyňka, ale milovník pořádku, vůně čerstvě uklizeného prostoru a pocitu, že dělám něco dobrého pro sebe i pro naši planetu.
+                </p>
+                
+                <p>
+                  Na Instagramu mě možná znáte jako @uklidovaguru, kde sdílím malé krůčky vedoucí k velkým změnám. Testuji přírodní čističe, vytvářím jednoduché rutiny a sdílím, co opravdu funguje. Úklid není jen o lesku a třpytu – je to cesta k vytvoření prostředí, kde se cítíme skvěle.
+                </p>
+                
+                <p>
+                  Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kdo chtějí uklízet vědomě a s radostí. Vyberte si, co vás osloví, a udělejte si doma krásně. Jedna myšlenka. Jedna výzva. Jedna malá změna, která má smysl. Rozhlédněte se a nechte se inspirovat.
+                </p>
+              </div>
+              
+              <div className="mt-8">
+                <a
+                  href="https://www.instagram.com/uklidovaguru/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-serif hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105"
+                >
+                  <Instagram size={20} />
+                  @uklidovaguru
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
