@@ -18,10 +18,11 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false)
 
   // Zobrazení náhodného citátu
-  const zobrazNahodnyC = useCallback((citatyArray: Citat[] = citaty) => {
-    if (citatyArray.length > 0) {
-      const nahodnyIndex = Math.floor(Math.random() * citatyArray.length)
-      setAktualniCitat(citatyArray[nahodnyIndex])
+  const zobrazNahodnyC = useCallback((citatyArray?: Citat[]) => {
+    const poleKPoužití = citatyArray || citaty
+    if (poleKPoužití.length > 0) {
+      const nahodnyIndex = Math.floor(Math.random() * poleKPoužití.length)
+      setAktualniCitat(poleKPoužití[nahodnyIndex])
     }
   }, [citaty])
 
@@ -37,14 +38,15 @@ export default function Home() {
       const citatyData = data as Citat[] || []
       setCitaty(citatyData)
       if (citatyData && citatyData.length > 0) {
-        zobrazNahodnyC(citatyData)
+        const nahodnyIndex = Math.floor(Math.random() * citatyData.length)
+        setAktualniCitat(citatyData[nahodnyIndex])
       }
     } catch (error) {
       console.error('Chyba při načítání citátů:', error)
     } finally {
       setLoading(false)
     }
-  }, [zobrazNahodnyC])
+  }, [])
 
   // Načtení citátů při prvním načtení
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function Home() {
   }, [nactiCitaty])
 
   const handleMainClick = () => {
-    window.location.reload()
+    zobrazNahodnyC()
   }
 
   const handleInfoClick = (e: React.MouseEvent) => {
