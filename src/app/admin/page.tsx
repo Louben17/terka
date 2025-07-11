@@ -9,7 +9,7 @@ interface Vyzva {
   id: number
   text: string
   autor: string | null
-  created_at: string
+  // Odebereme created_at, protože sloupec neexistuje
 }
 
 export default function AdminPage() {
@@ -254,7 +254,7 @@ export default function AdminPage() {
                           &ldquo;{vyzva.text}&rdquo;
                         </p>
                         <p className="text-xs text-gray-500 font-serif">
-                          Přidáno: {new Date(vyzva.created_at).toLocaleDateString('cs-CZ')}
+                          ID: {vyzva.id}
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">

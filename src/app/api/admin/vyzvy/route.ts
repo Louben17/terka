@@ -12,19 +12,14 @@ const supabase = createClient(
 export async function GET() {
   try {
     console.log('GET /api/admin/vyzvy called')
-    console.log('Environment check:', {
-      url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing',
-      serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Set' : 'Missing'
-    })
     
-    // Dočasně zakomentujeme auth pro debugging
-    // await requireAuth()
-    console.log('Auth skipped for debugging')
+    await requireAuth()
+    console.log('Auth passed')
 
     const { data, error } = await supabase
       .from('terka')
       .select('*')
-      .order('created_at', { ascending: false })
+      // Odebereme řazení podle created_at, protože sloupec neexistuje
 
     console.log('Supabase response:', { data, error })
 
@@ -37,6 +32,9 @@ export async function GET() {
     return NextResponse.json(data)
   } catch (error) {
     console.error('GET error:', error)
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     return NextResponse.json(
       { error: `Detailed error: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
@@ -64,6 +62,7 @@ export async function POST(request: NextRequest) {
         {
           text: text.trim(),
           autor: null
+          // Odebereme created_at - Supabase ho přidá automaticky pokud existuje
         }
       ])
       .select()
