@@ -88,6 +88,8 @@ export async function PUT(request: NextRequest) {
 
     const { id, text } = await request.json()
 
+    console.log('PUT request - ID:', id, 'Text:', text)
+
     if (!id || !text || text.trim().length === 0) {
       return NextResponse.json(
         { error: 'ID a text výzvy jsou povinné' },
@@ -101,7 +103,12 @@ export async function PUT(request: NextRequest) {
       .eq('id', id)
       .select()
 
-    if (error) throw error
+    console.log('Update result:', { data, error })
+
+    if (error) {
+      console.error('Update error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
 
     if (!data || data.length === 0) {
       return NextResponse.json(
@@ -112,11 +119,12 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(data[0])
   } catch (error) {
+    console.error('PUT error:', error)
     if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     return NextResponse.json(
-      { error: 'Chyba při aktualizaci výzvy' },
+      { error: `Update error: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     )
   }
@@ -130,6 +138,9 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
+    console.log('DELETE request - ID:', id)
+    console.log('Full URL:', request.url)
+
     if (!id) {
       return NextResponse.json(
         { error: 'ID výzvy je povinné' },
@@ -142,15 +153,21 @@ export async function DELETE(request: NextRequest) {
       .delete()
       .eq('id', id)
 
-    if (error) throw error
+    console.log('Delete result:', { error })
+
+    if (error) {
+      console.error('Delete error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    console.error('DELETE error:', error)
     if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     return NextResponse.json(
-      { error: 'Chyba při mazání výzvy' },
+      { error: `Delete error: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     )
   }

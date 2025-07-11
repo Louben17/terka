@@ -102,6 +102,7 @@ export default function AdminPage() {
 
   // Smazání výzvy
   const handleDeleteVyzva = async (id: number) => {
+    console.log('Delete clicked, ID:', id)
     if (!confirm('Opravdu chcete smazat tuto výzvu?')) return
 
     try {
@@ -109,10 +110,14 @@ export default function AdminPage() {
         method: 'DELETE',
       })
 
+      console.log('Delete response:', response.status)
+
       if (response.ok) {
         loadVyzvy()
       } else {
-        alert('Chyba při mazání výzvy')
+        const errorData = await response.json()
+        console.error('Delete error response:', errorData)
+        alert(`Chyba při mazání výzvy: ${errorData.error || 'Neznámá chyba'}`)
       }
     } catch {
       alert('Chyba při mazání výzvy')
