@@ -34,10 +34,10 @@ export const metadata: Metadata = {
     description: 'Objevte radost z úklidu s Úklidovou Guru Terezou. Inspirativní citáty, ekologické čisticí prostředky a praktické tipy pro čistý domov.',
     images: ['https://uklidovaguru.cz/og-image.jpg'],
   },
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-  },
+icons: {
+  icon: '/favicon.ico?v=2',
+  apple: '/apple-touch-icon.png',
+},
   manifest: '/site.webmanifest',
 }
 
