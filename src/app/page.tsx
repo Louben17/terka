@@ -18,6 +18,13 @@ export default function Home() {
   const [editingModal, setEditingModal] = useState(false)
   const [editedText, setEditedText] = useState('')
   const [saving, setSaving] = useState(false)
+  const [modalText, setModalText] = useState(`Vítejte na místě, kde se úklid, ekologie a radost z pořádku setkávají v dokonalé harmonii.
+
+Jsem Tereza a mám vášeň pro úklidová videa, zkoumání složení čisticích prostředků a hledání způsobů, jak udržet domov čistý s minimálním dopadem na přírodu. Nejsem perfektní hospodyňka, ale milovník pořádku, vůně čerstvě uklizeného prostoru a pocitu, že dělám něco dobrého pro sebe i pro naši planetu.
+
+Na Instagramu mě možná znáte jako @uklidovaguru, kde sdílím malé krůčky vedoucí k velkým změnám. Testuji přírodní čističe, vytvářím jednoduché rutiny a sdílím, co opravdu funguje. Úklid není jen o lesku a třpytu – je to cesta k vytvoření prostředí, kde se cítíme skvěle.
+
+Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kdo chtějí uklízet vědomě a s radostí. Vyberte si, co vás osloví, a udělejte si doma krásně. Jedna myšlenka. Jedna výzva. Jedna malá změna, která má smysl. Rozhlédněte se a nechte se inspirovat.`)
 
   // Zobrazení náhodné výzvy
   const zobrazNahodnouVyzvu = useCallback((vyzvaArray?: Vyzva[]) => {
@@ -88,21 +95,17 @@ export default function Home() {
   // Editace textu v modalu
   const handleEditModal = () => {
     setEditingModal(true)
-    setEditedText(`Vítejte na místě, kde se úklid, ekologie a radost z pořádku setkávají v dokonalé harmonii.
-
-Jsem Tereza a mám vášeň pro úklidová videa, zkoumání složení čisticích prostředků a hledání způsobů, jak udržet domov čistý s minimálním dopadem na přírodu. Nejsem perfektní hospodyňka, ale milovník pořádku, vůně čerstvě uklizeného prostoru a pocitu, že dělám něco dobrého pro sebe i pro naši planetu.
-
-Na Instagramu mě možná znáte jako @uklidovaguru, kde sdílím malé krůčky vedoucí k velkým změnám. Testuji přírodní čističe, vytvářím jednoduché rutiny a sdílím, co opravdu funguje. Úklid není jen o lesku a třpytu – je to cesta k vytvoření prostředí, kde se cítíme skvěle.
-
-Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kdo chtějí uklízet vědomě a s radostí. Vyberte si, co vás osloví, a udělejte si doma krásně. Jedna myšlenka. Jedna výzva. Jedna malá změna, která má smysl. Rozhlédněte se a nechte se inspirovat.`)
+    setEditedText(modalText)
   }
 
   // Uložení upraveného textu
   const handleSaveModal = async () => {
     setSaving(true)
     try {
-      // Zde by se uložil text do databáze nebo lokálního úložiště
-      // Pro demonstraci jen simulujeme uložení
+      // Uložíme text do state (bude se zobrazovat v modalu)
+      setModalText(editedText)
+      
+      // Simulace API volání pro uložení do databáze
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       setEditingModal(false)
@@ -253,21 +256,11 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
                 />
               ) : (
                 <div className="text-lg font-serif text-gray-700 leading-relaxed space-y-4">
-                  <p className="font-semibold">
-                    Vítejte na místě, kde se úklid, ekologie a radost z pořádku setkávají v dokonalé harmonii.
-                  </p>
-                  
-                  <p>
-                    Jsem Tereza a mám vášeň pro úklidová videa, zkoumání složení čisticích prostředků a hledání způsobů, jak udržet domov čistý s minimálním dopadem na přírodu. Nejsem perfektní hospodyňka, ale milovník pořádku, vůně čerstvě uklizeného prostoru a pocitu, že dělám něco dobrého pro sebe i pro naši planetu.
-                  </p>
-                  
-                  <p>
-                    Na Instagramu mě možná znáte jako @uklidovaguru, kde sdílím malé krůčky vedoucí k velkým změnám. Testuji přírodní čističe, vytvářím jednoduché rutiny a sdílím, co opravdu funguje. Úklid není jen o lesku a třpytu – je to cesta k vytvoření prostředí, kde se cítíme skvěle.
-                  </p>
-                  
-                  <p>
-                    Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kdo chtějí uklízet vědomě a s radostí. Vyberte si, co vás osloví, a udělejte si doma krásně. Jedna myšlenka. Jedna výzva. Jedna malá změna, která má smysl. Rozhlédněte se a nechte se inspirovat.
-                  </p>
+                  {modalText.split('\n\n').map((paragraph, index) => (
+                    <p key={index} className={index === 0 ? 'font-semibold' : ''}>
+                      {paragraph}
+                    </p>
+                  ))}
                 </div>
               )}
               
