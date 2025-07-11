@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Instagram, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
-interface Citat {
+interface Tip {
   id: number
   text: string
   autor: string | null
@@ -12,22 +12,22 @@ interface Citat {
 }
 
 export default function Home() {
-  const [citaty, setCitaty] = useState<Citat[]>([])
-  const [aktualniCitat, setAktualniCitat] = useState<Citat | null>(null)
+  const [tipy, setTipy] = useState<Tip[]>([])
+  const [aktualniTip, setAktualniTip] = useState<Tip | null>(null)
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
 
-  // Zobrazení náhodného citátu
-  const zobrazNahodnyC = useCallback((citatyArray?: Citat[]) => {
-    const poleKPoužití = citatyArray || citaty
+  // Zobrazení náhodného tipu
+  const zobrazNahodnyTip = useCallback((tipyArray?: Tip[]) => {
+    const poleKPoužití = tipyArray || tipy
     if (poleKPoužití.length > 0) {
       const nahodnyIndex = Math.floor(Math.random() * poleKPoužití.length)
-      setAktualniCitat(poleKPoužití[nahodnyIndex])
+      setAktualniTip(poleKPoužití[nahodnyIndex])
     }
-  }, [citaty])
+  }, [tipy])
 
-  // Načtení všech citátů z databáze
-  const nactiCitaty = useCallback(async () => {
+  // Načtení všech tipů z databáze
+  const nactiTipy = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('terka')
@@ -35,26 +35,26 @@ export default function Home() {
       
       if (error) throw error
       
-      const citatyData = data as Citat[] || []
-      setCitaty(citatyData)
-      if (citatyData && citatyData.length > 0) {
-        const nahodnyIndex = Math.floor(Math.random() * citatyData.length)
-        setAktualniCitat(citatyData[nahodnyIndex])
+      const tipyData = data as Tip[] || []
+      setTipy(tipyData)
+      if (tipyData && tipyData.length > 0) {
+        const nahodnyIndex = Math.floor(Math.random() * tipyData.length)
+        setAktualniTip(tipyData[nahodnyIndex])
       }
     } catch (error) {
-      console.error('Chyba při načítání citátů:', error)
+      console.error('Chyba při načítání tipů:', error)
     } finally {
       setLoading(false)
     }
   }, [])
 
-  // Načtení citátů při prvním načtení
+  // Načtení tipů při prvním načtení
   useEffect(() => {
-    nactiCitaty()
-  }, [nactiCitaty])
+    nactiTipy()
+  }, [nactiTipy])
 
   const handleMainClick = () => {
-    zobrazNahodnyC()
+    zobrazNahodnyTip()
   }
 
   const handleInfoClick = (e: React.MouseEvent) => {
@@ -89,26 +89,26 @@ export default function Home() {
         onClick={handleMainClick}
       >
         <div className="max-w-4xl w-full text-center">
-          {aktualniCitat && (
+          {aktualniTip && (
             <div className="transition-all duration-1000 ease-in-out">
               <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
-                &ldquo;{aktualniCitat.text}&rdquo;
+                &ldquo;{aktualniTip.text}&rdquo;
               </blockquote>
               
-              {aktualniCitat.autor && (
+              {aktualniTip.autor && (
                 <cite className="text-lg md:text-xl font-serif text-gray-500 not-italic">
-                  — {aktualniCitat.autor}
+                  — {aktualniTip.autor}
                 </cite>
               )}
             </div>
           )}
           
           <div className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
-            Klikni pro nový citát
+            Klikni pro nový tip
           </div>
           
           <div className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
-            {citaty.length} citátů
+            {tipy.length} tipů
           </div>
 
           {/* Tlačítka pro více informací a Instagram */}
