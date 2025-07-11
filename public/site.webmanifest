@@ -1,0 +1,17 @@
+{
+  "name": "Úklidová Guru",
+  "short_name": "ÚklidGuru",
+  "description": "Motivační výzvy pro čistý domov",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "theme_color": "#f9fafb",
+  "background_color": "#fdf2f8",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/"
+}

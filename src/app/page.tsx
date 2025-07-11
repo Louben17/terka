@@ -171,8 +171,12 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
         onClick={handleMainClick}
       >
         <div className="max-w-4xl w-full text-center">
+          {/* Skrytý H1 pro SEO */}
+          <h1 className="sr-only">Úklidová Guru - Denní motivační výzvy pro čistý domov</h1>
+          
           {aktualniVyzva && (
-            <div className="transition-all duration-1000 ease-in-out">
+            <article className="transition-all duration-1000 ease-in-out">
+              <h2 className="sr-only">Dnešní motivační výzva</h2>
               <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
                 &ldquo;{aktualniVyzva.text}&rdquo;
               </blockquote>
@@ -182,24 +186,27 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
                   — {aktualniVyzva.autor}
                 </cite>
               )}
-            </div>
+            </article>
           )}
           
-          <div className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
-            Klikni pro novou výzvu
-          </div>
+          {/* Instrukce pro uživatele */}
+          <section className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
+            <p>Klikni pro novou výzvu</p>
+          </section>
           
-          <div className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
-            {vyzvy.length} výzev
-          </div>
+          {/* Statistiky */}
+          <aside className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
+            <p>{vyzvy.length} výzev k dispozici</p>
+          </aside>
 
-          {/* Tlačítka pro více informací a Instagram */}
-          <div className="fixed top-8 right-8 flex items-center gap-3">
+          {/* Navigace a odkazy */}
+          <nav className="fixed top-8 right-8 flex items-center gap-3">
             {isAdmin && (
               <a
                 href="/admin"
                 className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-200 text-sm font-serif"
                 onClick={(e) => e.stopPropagation()}
+                aria-label="Přejít do administrace"
               >
                 Administrace
               </a>
@@ -208,6 +215,7 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
             <button
               onClick={handleInfoClick}
               className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full px-4 py-2 text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-200 text-sm font-serif"
+              aria-label="Zobrazit více informací o Úklidové Guru"
             >
               Více informací
             </button>
@@ -218,10 +226,11 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
               className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full p-2 text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-200"
+              aria-label="Sledovat Úklidovou Guru na Instagramu"
             >
               <Instagram size={20} />
             </a>
-          </div>
+          </nav>
         </div>
       </div>
 
@@ -242,7 +251,7 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
               <X size={24} />
             </button>
             
-            <div className="text-center mb-6">
+            <section className="text-center mb-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-3xl font-serif text-gray-800">
                   🌿 Úklidová Guru
@@ -283,14 +292,19 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
               </div>
               
               {editingModal ? (
-                <textarea
-                  value={editedText}
-                  onChange={(e) => setEditedText(e.target.value)}
-                  className="w-full h-96 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent font-serif text-gray-700 leading-relaxed resize-none"
-                  placeholder="Zadejte text..."
-                />
+                <div>
+                  <h3 className="sr-only">Editace textu o Úklidové Guru</h3>
+                  <textarea
+                    value={editedText}
+                    onChange={(e) => setEditedText(e.target.value)}
+                    className="w-full h-96 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent font-serif text-gray-700 leading-relaxed resize-none"
+                    placeholder="Zadejte text..."
+                    aria-label="Editace textu o Úklidové Guru"
+                  />
+                </div>
               ) : (
                 <div className="text-lg font-serif text-gray-700 leading-relaxed space-y-4">
+                  <h3 className="sr-only">O Úklidové Guru</h3>
                   {modalText.split('\n\n').map((paragraph, index) => (
                     <p key={index} className={index === 0 ? 'font-semibold' : ''}>
                       {paragraph}
@@ -299,18 +313,20 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
                 </div>
               )}
               
-              <div className="mt-8">
+              <footer className="mt-8">
+                <h3 className="sr-only">Sledujte nás na sociálních sítích</h3>
                 <a
                   href="https://www.instagram.com/uklidovaguru/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-serif hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105"
+                  aria-label="Sledovat Úklidovou Guru na Instagramu"
                 >
                   <Instagram size={20} />
                   @uklidovaguru
                 </a>
-              </div>
-            </div>
+              </footer>
+            </section>
           </div>
         </div>
       )}
