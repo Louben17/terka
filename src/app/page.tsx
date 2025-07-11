@@ -119,10 +119,45 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
-        <div className="text-center">
-          <div className="animate-pulse text-gray-400 text-lg font-serif">
-            Načítám...
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
+        <div className="max-w-4xl w-full text-center">
+          {/* Skeleton pro hlavní výzvu */}
+          <div className="animate-pulse">
+            {/* Skeleton pro citát */}
+            <div className="mb-8 space-y-4">
+              <div className="h-8 bg-gray-200 rounded-lg mx-auto w-3/4"></div>
+              <div className="h-8 bg-gray-200 rounded-lg mx-auto w-full"></div>
+              <div className="h-8 bg-gray-200 rounded-lg mx-auto w-2/3"></div>
+            </div>
+            
+            {/* Skeleton pro autora */}
+            <div className="h-6 bg-gray-200 rounded-lg mx-auto w-48 mb-8"></div>
+          </div>
+          
+          {/* Skeleton pro tlačítka v rohu */}
+          <div className="fixed top-8 right-8 flex items-center gap-3">
+            <div className="animate-pulse">
+              <div className="h-10 w-32 bg-white/60 rounded-full"></div>
+            </div>
+            <div className="animate-pulse">
+              <div className="h-10 w-10 bg-white/60 rounded-full"></div>
+            </div>
+          </div>
+          
+          {/* Skeleton pro spodní texty */}
+          <div className="fixed bottom-8 left-8 animate-pulse">
+            <div className="h-4 w-20 bg-gray-200 rounded"></div>
+          </div>
+          
+          <div className="fixed bottom-8 right-8 animate-pulse">
+            <div className="h-4 w-32 bg-gray-200 rounded"></div>
+          </div>
+          
+          {/* Jemný pulsující text pro feedback */}
+          <div className="absolute bottom-1/3 left-1/2 transform -translate-x-1/2">
+            <div className="animate-pulse text-gray-400 text-sm font-serif">
+              Načítám výzvy...
+            </div>
           </div>
         </div>
       </div>
