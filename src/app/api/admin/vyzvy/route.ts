@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { requireAuth } from '@/lib/auth'
+import { requireAuth } from '../../../../lib/auth'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,7 +10,7 @@ const supabase = createClient(
 // GET - načtení všech výzev
 export async function GET() {
   try {
-    requireAuth()
+    await requireAuth()
 
     const { data, error } = await supabase
       .from('terka')
@@ -34,7 +34,7 @@ export async function GET() {
 // POST - přidání nové výzvy
 export async function POST(request: NextRequest) {
   try {
-    requireAuth()
+    await requireAuth()
 
     const { text } = await request.json()
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 // PUT - aktualizace výzvy
 export async function PUT(request: NextRequest) {
   try {
-    requireAuth()
+    await requireAuth()
 
     const { id, text } = await request.json()
 
@@ -113,7 +113,7 @@ export async function PUT(request: NextRequest) {
 // DELETE - smazání výzvy
 export async function DELETE(request: NextRequest) {
   try {
-    requireAuth()
+    await requireAuth()
 
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
