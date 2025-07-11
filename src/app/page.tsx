@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Instagram, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
-interface Tip {
+interface Vyzva {
   id: number
   text: string
   autor: string | null
@@ -12,22 +12,22 @@ interface Tip {
 }
 
 export default function Home() {
-  const [tipy, setTipy] = useState<Tip[]>([])
-  const [aktualniTip, setAktualniTip] = useState<Tip | null>(null)
+  const [vyzvy, setVyzvy] = useState<Vyzva[]>([])
+  const [aktualniVyzva, setAktualniVyzva] = useState<Vyzva | null>(null)
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
 
-  // Zobrazení náhodného tipu
-  const zobrazNahodnyTip = useCallback((tipyArray?: Tip[]) => {
-    const poleKPoužití = tipyArray || tipy
+  // Zobrazení náhodné výzvy
+  const zobrazNahodnouVyzvu = useCallback((vyzvaArray?: Vyzva[]) => {
+    const poleKPoužití = vyzvaArray || vyzvy
     if (poleKPoužití.length > 0) {
       const nahodnyIndex = Math.floor(Math.random() * poleKPoužití.length)
-      setAktualniTip(poleKPoužití[nahodnyIndex])
+      setAktualniVyzva(poleKPoužití[nahodnyIndex])
     }
-  }, [tipy])
+  }, [vyzvy])
 
-  // Načtení všech tipů z databáze
-  const nactiTipy = useCallback(async () => {
+  // Načtení všech výzev z databáze
+  const nactiVyzvy = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('terka')
@@ -35,26 +35,26 @@ export default function Home() {
       
       if (error) throw error
       
-      const tipyData = data as Tip[] || []
-      setTipy(tipyData)
-      if (tipyData && tipyData.length > 0) {
-        const nahodnyIndex = Math.floor(Math.random() * tipyData.length)
-        setAktualniTip(tipyData[nahodnyIndex])
+      const vyzvaData = data as Vyzva[] || []
+      setVyzvy(vyzvaData)
+      if (vyzvaData && vyzvaData.length > 0) {
+        const nahodnyIndex = Math.floor(Math.random() * vyzvaData.length)
+        setAktualniVyzva(vyzvaData[nahodnyIndex])
       }
     } catch (error) {
-      console.error('Chyba při načítání tipů:', error)
+      console.error('Chyba při načítání výzev:', error)
     } finally {
       setLoading(false)
     }
   }, [])
 
-  // Načtení tipů při prvním načtení
+  // Načtení výzev při prvním načtení
   useEffect(() => {
-    nactiTipy()
-  }, [nactiTipy])
+    nactiVyzvy()
+  }, [nactiVyzvy])
 
   const handleMainClick = () => {
-    zobrazNahodnyTip()
+    zobrazNahodnouVyzvu()
   }
 
   const handleInfoClick = (e: React.MouseEvent) => {
@@ -89,26 +89,26 @@ export default function Home() {
         onClick={handleMainClick}
       >
         <div className="max-w-4xl w-full text-center">
-          {aktualniTip && (
+          {aktualniVyzva && (
             <div className="transition-all duration-1000 ease-in-out">
               <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
-                &ldquo;{aktualniTip.text}&rdquo;
+                &ldquo;{aktualniVyzva.text}&rdquo;
               </blockquote>
               
-              {aktualniTip.autor && (
+              {aktualniVyzva.autor && (
                 <cite className="text-lg md:text-xl font-serif text-gray-500 not-italic">
-                  — {aktualniTip.autor}
+                  — {aktualniVyzva.autor}
                 </cite>
               )}
             </div>
           )}
           
           <div className="fixed bottom-8 right-8 text-sm text-gray-400 font-serif">
-            Klikni pro nový tip
+            Klikni pro novou výzvu
           </div>
           
           <div className="fixed bottom-8 left-8 text-sm text-gray-400 font-serif">
-            {tipy.length} tipů
+            {vyzvy.length} výzev
           </div>
 
           {/* Tlačítka pro více informací a Instagram */}
