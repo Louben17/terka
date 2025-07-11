@@ -6,18 +6,18 @@ import Link from 'next/link'
 import { Plus, Edit2, Trash2, LogOut, Save, X } from 'lucide-react'
 
 interface Vyzva {
-  id: number
   text: string
   autor: string | null
-  // Odebereme created_at, protože sloupec neexistuje
+  // Bez ID - budeme používat text jako identifikátor
 }
 
 export default function AdminPage() {
   const [vyzvy, setVyzvy] = useState<Vyzva[]>([])
   const [loading, setLoading] = useState(true)
   const [newVyzva, setNewVyzva] = useState('')
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [editingText, setEditingText] = useState('')
+  const [editingOriginalText, setEditingOriginalText] = useState('') // Pro identifikaci při editaci
   const [saving, setSaving] = useState(false)
   const router = useRouter()
 
@@ -73,7 +73,7 @@ export default function AdminPage() {
   }
 
   // Editace výzvy
-  const handleEditVyzva = async (id: number) => {
+  const handleEditVyzva = async (originalText: string) => {
     if (!editingText.trim() || saving) return
 
     setSaving(true)
@@ -83,15 +83,20 @@ export default function AdminPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, text: editingText }),
+        body: JSON.stringify({ 
+          originalText: originalText, 
+          newText: editingText 
+        }),
       })
 
       if (response.ok) {
         setEditingId(null)
         setEditingText('')
+        setEditingOriginalText('')
         loadVyzvy()
       } else {
-        alert('Chyba při aktualizaci výzvy')
+        const errorData = await response.json()
+        alert(`Chyba při aktualizaci výzvy: ${errorData.error || 'Neznámá chyba'}`)
       }
     } catch {
       alert('Chyba při aktualizaci výzvy')
@@ -101,13 +106,17 @@ export default function AdminPage() {
   }
 
   // Smazání výzvy
-  const handleDeleteVyzva = async (id: number) => {
-    console.log('Delete clicked, ID:', id)
+  const handleDeleteVyzva = async (text: string) => {
+    console.log('Delete clicked, text:', text)
     if (!confirm('Opravdu chcete smazat tuto výzvu?')) return
 
     try {
-      const response = await fetch(`/api/admin/vyzvy?id=${id}`, {
+      const response = await fetch(`/api/admin/vyzvy`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: text })
       })
 
       console.log('Delete response:', response.status)
@@ -216,12 +225,12 @@ export default function AdminPage() {
             </p>
           ) : (
             <div className="space-y-4">
-              {vyzvy.map((vyzva) => (
+              {vyzvy.map((vyzva, index) => (
                 <div
-                  key={vyzva.id}
+                  key={`${vyzva.text}-${index}`}
                   className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                 >
-                  {editingId === vyzva.id ? (
+                  {editingId === vyzva.text ? (
                     // Editační režim
                     <div className="space-y-3">
                       <textarea
@@ -232,7 +241,7 @@ export default function AdminPage() {
                       />
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleEditVyzva(vyzva.id)}
+                          onClick={() => handleEditVyzva(editingOriginalText)}
                           disabled={saving}
                           className="flex items-center gap-1 bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded font-serif text-sm transition-colors"
                         >
@@ -243,6 +252,7 @@ export default function AdminPage() {
                           onClick={() => {
                             setEditingId(null)
                             setEditingText('')
+                            setEditingOriginalText('')
                           }}
                           className="flex items-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded font-serif text-sm transition-colors"
                         >
@@ -259,14 +269,15 @@ export default function AdminPage() {
                           &ldquo;{vyzva.text}&rdquo;
                         </p>
                         <p className="text-xs text-gray-500 font-serif">
-                          ID: {vyzva.id}
+                          Pozice: {index + 1}
                         </p>
                       </div>
                       <div className="flex gap-2 ml-4">
                         <button
                           onClick={() => {
-                            setEditingId(vyzva.id)
+                            setEditingId(vyzva.text)
                             setEditingText(vyzva.text)
+                            setEditingOriginalText(vyzva.text)
                           }}
                           className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-serif text-sm transition-colors"
                         >
@@ -274,7 +285,7 @@ export default function AdminPage() {
                           Editovat
                         </button>
                         <button
-                          onClick={() => handleDeleteVyzva(vyzva.id)}
+                          onClick={() => handleDeleteVyzva(vyzva.text)}
                           className="flex items-center gap-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded font-serif text-sm transition-colors"
                         >
                           <Trash2 size={14} />

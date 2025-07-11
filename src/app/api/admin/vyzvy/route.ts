@@ -11,24 +11,17 @@ const supabase = createClient(
 // GET - načtení všech výzev
 export async function GET() {
   try {
-    console.log('GET /api/admin/vyzvy called')
-    
     await requireAuth()
-    console.log('Auth passed')
 
     const { data, error } = await supabase
       .from('terka')
       .select('*')
-      // Odebereme řazení podle created_at, protože sloupec neexistuje
-
-    console.log('Supabase response:', { data, error })
 
     if (error) {
       console.error('Supabase error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    console.log('Returning data:', data)
     return NextResponse.json(data)
   } catch (error) {
     console.error('GET error:', error)
@@ -86,21 +79,21 @@ export async function PUT(request: NextRequest) {
   try {
     await requireAuth()
 
-    const { id, text } = await request.json()
+    const { originalText, newText } = await request.json()
 
-    console.log('PUT request - ID:', id, 'Text:', text)
+    console.log('PUT request - Original:', originalText, 'New:', newText)
 
-    if (!id || !text || text.trim().length === 0) {
+    if (!originalText || !newText || newText.trim().length === 0) {
       return NextResponse.json(
-        { error: 'ID a text výzvy jsou povinné' },
+        { error: 'Původní text a nový text jsou povinné' },
         { status: 400 }
       )
     }
 
     const { data, error } = await supabase
       .from('terka')
-      .update({ text: text.trim() })
-      .eq('id', id)
+      .update({ text: newText.trim() })
+      .eq('text', originalText)
       .select()
 
     console.log('Update result:', { data, error })
@@ -135,15 +128,13 @@ export async function DELETE(request: NextRequest) {
   try {
     await requireAuth()
 
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
+    const { text } = await request.json()
 
-    console.log('DELETE request - ID:', id)
-    console.log('Full URL:', request.url)
+    console.log('DELETE request - Text:', text)
 
-    if (!id) {
+    if (!text) {
       return NextResponse.json(
-        { error: 'ID výzvy je povinné' },
+        { error: 'Text výzvy je povinný' },
         { status: 400 }
       )
     }
@@ -151,7 +142,7 @@ export async function DELETE(request: NextRequest) {
     const { error } = await supabase
       .from('terka')
       .delete()
-      .eq('id', id)
+      .eq('text', text)
 
     console.log('Delete result:', { error })
 
