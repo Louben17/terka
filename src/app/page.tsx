@@ -167,7 +167,7 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
   return (
     <>
       <div 
-        className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8 cursor-pointer"
+        className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8 cursor-default"
         onClick={handleMainClick}
       >
         <div className="max-w-4xl w-full text-center">
