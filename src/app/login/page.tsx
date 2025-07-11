@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -29,7 +30,7 @@ export default function LoginPage() {
       } else {
         setError('Nesprávné přihlašovací údaje')
       }
-    } catch (error) {
+    } catch {
       setError('Chyba při přihlašování')
     } finally {
       setLoading(false)
@@ -101,12 +102,12 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 text-center">
-          <a
+          <Link
             href="/"
             className="text-gray-600 hover:text-gray-800 font-serif text-sm transition-colors"
           >
             ← Zpět na hlavní stránku
-          </a>
+          </Link>
         </div>
       </div>
     </div>

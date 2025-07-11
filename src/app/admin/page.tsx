@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Plus, Edit2, Trash2, LogOut, Save, X } from 'lucide-react'
 
 interface Vyzva {
@@ -21,7 +22,7 @@ export default function AdminPage() {
   const router = useRouter()
 
   // Načtení výzev
-  const loadVyzvy = async () => {
+  const loadVyzvy = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/vyzvy')
       if (response.status === 401) {
@@ -32,16 +33,16 @@ export default function AdminPage() {
         const data = await response.json()
         setVyzvy(data)
       }
-    } catch (error) {
-      console.error('Chyba při načítání výzev:', error)
+    } catch {
+      console.error('Chyba při načítání výzev')
     } finally {
       setLoading(false)
     }
-  }
+  }, [router])
 
   useEffect(() => {
     loadVyzvy()
-  }, [])
+  }, [loadVyzvy])
 
   // Přidání nové výzvy
   const handleAddVyzva = async (e: React.FormEvent) => {
@@ -64,7 +65,7 @@ export default function AdminPage() {
       } else {
         alert('Chyba při přidávání výzvy')
       }
-    } catch (error) {
+    } catch {
       alert('Chyba při přidávání výzvy')
     } finally {
       setSaving(false)
@@ -92,7 +93,7 @@ export default function AdminPage() {
       } else {
         alert('Chyba při aktualizaci výzvy')
       }
-    } catch (error) {
+    } catch {
       alert('Chyba při aktualizaci výzvy')
     } finally {
       setSaving(false)
@@ -113,7 +114,7 @@ export default function AdminPage() {
       } else {
         alert('Chyba při mazání výzvy')
       }
-    } catch (error) {
+    } catch {
       alert('Chyba při mazání výzvy')
     }
   }
@@ -123,7 +124,7 @@ export default function AdminPage() {
     try {
       await fetch('/api/auth', { method: 'DELETE' })
       router.push('/login')
-    } catch (error) {
+    } catch {
       router.push('/login')
     }
   }
@@ -155,12 +156,12 @@ export default function AdminPage() {
               </p>
             </div>
             <div className="flex gap-4">
-              <a
+              <Link
                 href="/"
                 className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg font-serif text-gray-700 transition-colors"
               >
                 Zobrazit web
-              </a>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg font-serif transition-colors"
@@ -250,7 +251,7 @@ export default function AdminPage() {
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <p className="text-gray-800 font-serif leading-relaxed mb-2">
-                          "{vyzva.text}"
+                          &ldquo;{vyzva.text}&rdquo;
                         </p>
                         <p className="text-xs text-gray-500 font-serif">
                           Přidáno: {new Date(vyzva.created_at).toLocaleDateString('cs-CZ')}

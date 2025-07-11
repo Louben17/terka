@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 
 const ADMIN_USERNAME = 'uklidovaguru'
 const ADMIN_PASSWORD = 'uklidovaguru*654321'
@@ -28,7 +27,7 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Chyba serveru' },
       { status: 500 }
