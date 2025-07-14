@@ -178,7 +178,7 @@ Tento web není e-shop ani nekonečný blog. Je to útočiště pro všechny, kd
             <article className="transition-all duration-1000 ease-in-out">
               <h2 className="sr-only">Dnešní motivační výzva</h2>
               <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-700 leading-relaxed mb-8 italic">
-                &ldquo;{aktualniVyzva.text}&rdquo;
+                {aktualniVyzva.text}
               </blockquote>
               
               {aktualniVyzva.autor && (
