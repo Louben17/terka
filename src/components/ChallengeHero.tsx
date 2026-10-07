@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { ArrowLeft, ArrowRight, Check, Pause, Play, Share2, Sun } from 'lucide-react'
-import { Bubbles } from './Bubbles'
+import { Shapes } from './Shapes'
 
 const AUTOPLAY_MS = 9000
 const DONE_KEY = 'ug-splnene-vyzvy'
@@ -62,7 +62,10 @@ interface Burst {
   x: number
   y: number
   size: number
+  color: string
 }
+
+const BURST_COLORS = ['bg-moss', 'bg-sage', 'bg-sun', 'bg-blush']
 
 export function ChallengeHero({
   vyzvy,
@@ -126,7 +129,8 @@ export function ChallengeHero({
         id: now + i,
         x: Math.cos(angle) * distance,
         y: Math.sin(angle) * distance - 30,
-        size: 8 + Math.random() * 22,
+        size: 6 + Math.random() * 12,
+        color: BURST_COLORS[i % BURST_COLORS.length],
       }
     })
     setBursts(newBursts)
@@ -177,197 +181,202 @@ export function ChallengeHero({
         : 'text-[clamp(1.9rem,4.4vw,3.8rem)]'
 
   return (
-    <section id="vyzva" className="relative flex min-h-svh flex-col overflow-hidden">
-      <Bubbles />
+    <section id="vyzva" className="px-2 pt-2 sm:px-3 sm:pt-3">
+      <div className="relative flex min-h-[calc(100svh-1rem)] flex-col overflow-hidden rounded-[2rem] bg-mint sm:min-h-[calc(100svh-1.5rem)] sm:rounded-[2.5rem]">
+        <Shapes />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 pt-32 pb-12 text-center sm:px-6">
-        <h1 className="mb-5 text-xs font-medium tracking-[0.25em] text-ink-soft uppercase">
-          Úklidové výzvy na každý den
-        </h1>
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 pt-32 pb-12 text-center sm:px-6">
+          <h1 className="mb-5 text-xs font-medium tracking-[0.25em] text-moss uppercase">
+            Úklidové výzvy na každý den
+          </h1>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="glass flex items-center gap-2.5 rounded-full py-1.5 pr-4 pl-1.5 text-sm text-ink-soft"
-        >
-          <span className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 text-xs font-medium tracking-wide text-cream uppercase">
-            <span className="relative flex size-1.5">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-sage opacity-75" />
-              <span className="relative inline-flex size-1.5 rounded-full bg-sage" />
-            </span>
-            {isDaily ? 'Výzva dne' : 'Další výzva'}
-          </span>
-          <span className="first-letter:uppercase">{dateLabel}</span>
-        </motion.div>
-
-        <div className="relative mt-10 flex min-h-[40vh] w-full items-center justify-center sm:min-h-[44vh]">
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={index}
-              className={`max-w-5xl font-serif leading-[1.02] tracking-[-0.02em] text-balance text-ink ${sizeClass}`}
-              aria-live="polite"
-              exit={{ opacity: 0, y: -16, filter: 'blur(10px)', transition: { duration: 0.3 } }}
-            >
-              {words.map((word, i) => (
-                <motion.span
-                  key={`${word}-${i}`}
-                  className="inline-block"
-                  initial={animate ? { opacity: 0, y: 24, filter: 'blur(14px)' } : false}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.7, delay: 0.05 * i, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {i === words.length - 1 ? <em className="text-moss">{word}</em> : word}
-                  {i < words.length - 1 && ' '}
-                </motion.span>
-              ))}
-            </motion.p>
-          </AnimatePresence>
-        </div>
-
-        <p className="mt-6 font-mono text-xs tracking-[0.2em] text-ink-soft/70 uppercase">
-          № {String(index + 1).padStart(3, '0')} / {String(vyzvy.length).padStart(3, '0')}
-        </p>
-
-        {/* Ovládání */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-3"
-        >
-          <button
-            type="button"
-            onClick={prev}
-            disabled={history.length === 0}
-            className="glass flex size-12 items-center justify-center rounded-full text-ink transition-all hover:scale-105 disabled:pointer-events-none disabled:opacity-40"
-            aria-label="Předchozí výzva"
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex items-center gap-2.5 rounded-full bg-paper py-1.5 pr-4 pl-1.5 text-sm text-ink-soft"
           >
-            <ArrowLeft size={18} />
-          </button>
-
-          <button
-            type="button"
-            onClick={next}
-            className="group flex h-12 items-center gap-3 rounded-full bg-ink pr-2 pl-6 text-cream shadow-[0_12px_30px_-10px_rgb(24_33_28/0.6)] transition-all hover:bg-moss hover:shadow-[0_16px_36px_-10px_rgb(44_70_54/0.7)]"
-          >
-            Další výzva
-            <span className="flex size-8 items-center justify-center rounded-full bg-cream text-ink transition-transform duration-500 group-hover:rotate-[-45deg]">
-              <ArrowRight size={16} />
+            <span className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-1 text-xs font-medium tracking-wide text-cream uppercase">
+              <span className="relative flex size-1.5">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-sage opacity-75" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-sage" />
+              </span>
+              {isDaily ? 'Výzva dne' : 'Další výzva'}
             </span>
-          </button>
+            <span className="first-letter:uppercase">{dateLabel}</span>
+          </motion.div>
 
-          <div className="relative">
-            <button
-              type="button"
-              onClick={toggleDone}
-              aria-pressed={isDone}
-              className={`flex h-12 items-center gap-2 rounded-full px-5 transition-all hover:scale-[1.03] ${
-                isDone ? 'bg-sage text-ink' : 'glass text-ink'
-              }`}
-            >
-              <motion.span
-                key={String(isDone)}
-                initial={{ scale: 0.4, rotate: -30 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                className={`flex size-5 items-center justify-center rounded-full border ${
-                  isDone ? 'border-ink bg-ink text-cream' : 'border-ink/40'
-                }`}
+          <div className="relative mt-10 flex min-h-[40vh] w-full items-center justify-center sm:min-h-[44vh]">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={index}
+                className={`max-w-5xl font-serif leading-[1.02] tracking-[-0.02em] text-balance text-ink ${sizeClass}`}
+                aria-live="polite"
+                exit={{ opacity: 0, y: -16, transition: { duration: 0.25 } }}
               >
-                {isDone && <Check size={12} strokeWidth={3} />}
-              </motion.span>
-              {isDone ? 'Splněno!' : 'Splněno'}
-            </button>
-            <AnimatePresence>
-              {bursts.map((b) => (
-                <motion.span
-                  key={b.id}
-                  className="bubble pointer-events-none absolute top-1/2 left-1/2"
-                  style={{ width: b.size, height: b.size, marginLeft: -b.size / 2, marginTop: -b.size / 2 }}
-                  initial={{ x: 0, y: 0, opacity: 1, scale: 0.3 }}
-                  animate={{ x: b.x, y: b.y, opacity: 0, scale: 1 }}
-                  transition={{ duration: 1.2, ease: 'easeOut' }}
-                />
-              ))}
+                {words.map((word, i) => (
+                  <motion.span
+                    key={`${word}-${i}`}
+                    className="inline-block"
+                    initial={animate ? { opacity: 0, y: 24 } : false}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.05 * i, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    {i === words.length - 1 ? <em className="text-moss">{word}</em> : word}
+                    {i < words.length - 1 && ' '}
+                  </motion.span>
+                ))}
+              </motion.p>
             </AnimatePresence>
           </div>
 
-          <button
-            type="button"
-            onClick={share}
-            className="glass relative flex size-12 items-center justify-center rounded-full text-ink transition-all hover:scale-105"
-            aria-label="Sdílet výzvu"
-          >
-            {copied ? <Check size={18} /> : <Share2 size={18} />}
-          </button>
+          <p className="mt-6 font-mono text-xs tracking-[0.2em] text-ink-soft/70 uppercase">
+            № {String(index + 1).padStart(3, '0')} / {String(vyzvy.length).padStart(3, '0')}
+          </p>
 
-          <button
-            type="button"
-            onClick={() => setAutoplay((a) => !a)}
-            aria-pressed={autoplay}
-            className="glass relative flex size-12 items-center justify-center rounded-full text-ink transition-all hover:scale-105"
-            aria-label={autoplay ? 'Zastavit automatické střídání' : 'Spustit automatické střídání'}
-            title={autoplay ? 'Zastavit střídání' : 'Střídat výzvy automaticky'}
+          {/* Ovládání */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-3"
           >
-            {autoplay && (
-              <svg className="absolute inset-0 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
-                <motion.circle
-                  key={index}
-                  cx="24"
-                  cy="24"
-                  r="22"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="text-moss"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
-                />
-              </svg>
-            )}
-            {autoplay ? <Pause size={16} /> : <Play size={16} />}
-          </button>
-        </motion.div>
-
-        <div className="mt-6 h-6 text-sm text-ink-soft">
-          {!isDaily ? (
             <button
               type="button"
-              onClick={backToDaily}
-              className="inline-flex items-center gap-1.5 underline-offset-4 hover:text-ink hover:underline"
+              onClick={prev}
+              disabled={history.length === 0}
+              className="flex size-12 items-center justify-center rounded-full bg-paper text-ink transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-40"
+              aria-label="Předchozí výzva"
             >
-              <Sun size={14} /> Zpět na výzvu dne
+              <ArrowLeft size={18} />
             </button>
-          ) : done.length > 0 ? (
-            <span>
-              Splněných výzev: <strong className="font-semibold text-ink">{done.length}</strong> 🌿
-            </span>
-          ) : null}
-        </div>
-      </div>
 
-      {/* Spodní lišta */}
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl items-end justify-center px-6 pb-8 sm:justify-between text-xs text-ink-soft">
-        <Link href="/uklidove-vyzvy" className="hidden underline-offset-4 hover:text-ink hover:underline sm:block">
-          Všech {vyzvy.length} výzev →
-        </Link>
-        <a href="#jak-to-funguje" className="group flex flex-col items-center gap-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2">
-          <span className="tracking-[0.2em] uppercase">Scroll</span>
-          <span className="flex h-9 w-5 justify-center rounded-full border border-ink/30 pt-1.5">
-            <motion.span
-              className="block h-2 w-1 rounded-full bg-ink/60"
-              animate={{ y: [0, 10, 0], opacity: [1, 0.2, 1] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-            />
+            <button
+              type="button"
+              onClick={next}
+              className="group flex h-12 items-center gap-3 rounded-full bg-ink pr-2 pl-6 text-cream transition-colors hover:bg-moss"
+            >
+              Další výzva
+              <span className="flex size-8 items-center justify-center rounded-full bg-cream text-ink transition-transform duration-500 group-hover:rotate-[-45deg]">
+                <ArrowRight size={16} />
+              </span>
+            </button>
+
+            <div className="relative">
+              <button
+                type="button"
+                onClick={toggleDone}
+                aria-pressed={isDone}
+                className={`flex h-12 items-center gap-2 rounded-full px-5 transition-colors ${
+                  isDone ? 'bg-sage text-ink' : 'bg-paper text-ink hover:bg-white'
+                }`}
+              >
+                <motion.span
+                  key={String(isDone)}
+                  initial={{ scale: 0.4, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                  className={`flex size-5 items-center justify-center rounded-full border ${
+                    isDone ? 'border-ink bg-ink text-cream' : 'border-ink/40'
+                  }`}
+                >
+                  {isDone && <Check size={12} strokeWidth={3} />}
+                </motion.span>
+                {isDone ? 'Splněno!' : 'Splněno'}
+              </button>
+              <AnimatePresence>
+                {bursts.map((b) => (
+                  <motion.span
+                    key={b.id}
+                    className={`${b.color} pointer-events-none absolute top-1/2 left-1/2 rounded-full`}
+                    style={{ width: b.size, height: b.size, marginLeft: -b.size / 2, marginTop: -b.size / 2 }}
+                    initial={{ x: 0, y: 0, opacity: 1, scale: 0.3 }}
+                    animate={{ x: b.x, y: b.y, opacity: 0, scale: 1 }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+
+            <button
+              type="button"
+              onClick={share}
+              className="relative flex size-12 items-center justify-center rounded-full bg-paper text-ink transition-colors hover:bg-white"
+              aria-label="Sdílet výzvu"
+            >
+              {copied ? <Check size={18} /> : <Share2 size={18} />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setAutoplay((a) => !a)}
+              aria-pressed={autoplay}
+              className="relative flex size-12 items-center justify-center rounded-full bg-paper text-ink transition-colors hover:bg-white"
+              aria-label={autoplay ? 'Zastavit automatické střídání' : 'Spustit automatické střídání'}
+              title={autoplay ? 'Zastavit střídání' : 'Střídat výzvy automaticky'}
+            >
+              {autoplay && (
+                <svg className="absolute inset-0 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+                  <motion.circle
+                    key={index}
+                    cx="24"
+                    cy="24"
+                    r="22"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-moss"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
+                  />
+                </svg>
+              )}
+              {autoplay ? <Pause size={16} /> : <Play size={16} />}
+            </button>
+          </motion.div>
+
+          <div className="mt-6 h-6 text-sm text-ink-soft">
+            {!isDaily ? (
+              <button
+                type="button"
+                onClick={backToDaily}
+                className="inline-flex items-center gap-1.5 underline-offset-4 hover:text-ink hover:underline"
+              >
+                <Sun size={14} /> Zpět na výzvu dne
+              </button>
+            ) : done.length > 0 ? (
+              <span>
+                Splněných výzev: <strong className="font-semibold text-ink">{done.length}</strong> 🌿
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        {/* Spodní lišta */}
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl items-end justify-center px-6 pb-8 sm:justify-between text-xs text-ink-soft">
+          <Link href="/uklidove-vyzvy" className="hidden underline-offset-4 hover:text-ink hover:underline sm:block">
+            Všech {vyzvy.length} výzev →
+          </Link>
+          <a
+            href="#jak-to-funguje"
+            className="group flex flex-col items-center gap-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
+          >
+            <span className="tracking-[0.2em] uppercase">Scroll</span>
+            <span className="flex h-9 w-5 justify-center rounded-full border border-ink/30 pt-1.5">
+              <motion.span
+                className="block h-2 w-1 rounded-full bg-ink/60"
+                animate={{ y: [0, 10, 0], opacity: [1, 0.2, 1] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </span>
+          </a>
+          <span className="hidden items-center gap-1.5 sm:flex">
+            <kbd className="rounded-md bg-paper px-1.5 py-0.5 font-sans">←</kbd>
+            <kbd className="rounded-md bg-paper px-1.5 py-0.5 font-sans">→</kbd>
+            listování
           </span>
-        </a>
-        <span className="hidden items-center gap-1.5 sm:flex">
-          <kbd className="glass rounded-md px-1.5 py-0.5 font-sans">←</kbd>
-          <kbd className="glass rounded-md px-1.5 py-0.5 font-sans">→</kbd>
-          listování
-        </span>
+        </div>
       </div>
     </section>
   )

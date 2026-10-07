@@ -24,8 +24,6 @@ export function ArticleCover({
         priority={priority}
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
-      <span aria-hidden="true" className="bubble absolute top-5 right-5 size-10 opacity-90" />
     </div>
   )
 }
@@ -42,7 +40,7 @@ export function ArticleCard({
   return (
     <Link
       href={`/clanky/${clanek.slug}`}
-      className={`group flex h-full flex-col overflow-hidden rounded-[2rem] border border-line bg-paper transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgb(24_33_28/0.35)] ${
+      className={`group flex h-full flex-col overflow-hidden rounded-[2rem] border border-line bg-paper transition-colors duration-500 hover:border-sage ${
         horizontal ? 'sm:flex-row' : ''
       }`}
     >

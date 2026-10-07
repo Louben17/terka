@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Lock } from 'lucide-react'
-import { Bubbles } from '@/components/Bubbles'
+import { Shapes } from '@/components/Shapes'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -41,9 +41,9 @@ export default function LoginPage() {
     'w-full rounded-2xl border border-line bg-white/70 px-4 py-3 text-ink outline-none transition focus:border-moss focus:ring-4 focus:ring-sage/30'
 
   return (
-    <main className="relative flex min-h-svh items-center justify-center overflow-hidden p-4">
-      <Bubbles dim />
-      <div className="glass relative w-full max-w-md rounded-[2rem] p-8 sm:p-10">
+    <main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-mint p-4">
+      <Shapes variant="subtle" />
+      <div className="surface relative w-full max-w-md rounded-[2rem] p-8 sm:p-10">
         <span className="flex size-12 items-center justify-center rounded-2xl bg-ink text-cream">
           <Lock size={20} />
         </span>

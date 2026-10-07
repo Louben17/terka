@@ -70,7 +70,7 @@ export function GallerySection() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/0 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
               <figcaption className="absolute inset-x-0 bottom-0 p-4 text-cream sm:p-5">
-                <span className="glass inline-block rounded-full px-3 py-1 text-xs font-medium text-ink">{f.misto}</span>
+                <span className="inline-block rounded-full bg-paper px-3 py-1 text-xs font-medium text-ink">{f.misto}</span>
                 <p className="mt-2 max-h-0 overflow-hidden font-serif text-lg leading-snug opacity-0 transition-all duration-500 group-hover:max-h-32 group-hover:opacity-100 max-lg:max-h-32 max-lg:opacity-100 sm:text-xl">
                   {f.tip}
                 </p>

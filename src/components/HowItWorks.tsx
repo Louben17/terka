@@ -38,15 +38,15 @@ export function HowItWorks({ count }: { count: number }) {
       <ol className="mt-16 grid gap-5 md:grid-cols-3">
         {steps.map((step, i) => (
           <Reveal as="li" key={step.title} delay={i * 0.12}>
-            <div className="group ring-gradient relative h-full overflow-hidden rounded-[2rem] bg-paper p-8 transition-transform duration-500 hover:-translate-y-1.5">
+            <div className="group relative h-full overflow-hidden rounded-[2rem] border border-line bg-paper p-8 transition-colors duration-500 hover:border-sage">
               <div
-                className={`absolute -top-16 -right-16 size-48 rounded-full ${step.tone} opacity-70 blur-2xl transition-transform duration-700 group-hover:scale-125`}
+                className={`absolute -top-12 -right-12 size-36 rounded-full ${step.tone} transition-transform duration-700 group-hover:scale-110`}
               />
               <div className="relative flex items-start justify-between">
                 <span className="flex size-14 items-center justify-center rounded-2xl bg-ink text-cream">
                   <step.icon size={24} strokeWidth={1.6} />
                 </span>
-                <span className="font-serif text-6xl text-ink/10">0{i + 1}</span>
+                <span className="relative font-serif text-6xl text-ink/25">0{i + 1}</span>
               </div>
               <h3 className="relative mt-10 font-serif text-3xl tracking-tight">{step.title}</h3>
               <p className="relative mt-3 leading-relaxed text-ink-soft">{step.text}</p>

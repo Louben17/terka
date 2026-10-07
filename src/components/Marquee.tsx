@@ -24,7 +24,7 @@ export function Marquee({ items }: { items: string[] }) {
       <div className="absolute inset-x-[-5%] top-[64%] -translate-y-1/2 rotate-[2.5deg] border-y border-line bg-paper">
         <Row items={items.slice(half)} reverse />
       </div>
-      <div className="absolute inset-x-[-5%] top-[38%] z-10 -translate-y-1/2 -rotate-[3deg] bg-moss-deep shadow-[0_20px_50px_-20px_rgb(24_33_28/0.6)]">
+      <div className="absolute inset-x-[-5%] top-[38%] z-10 -translate-y-1/2 -rotate-[3deg] bg-moss-deep">
         <Row items={items.slice(0, half)} dark />
       </div>
     </section>

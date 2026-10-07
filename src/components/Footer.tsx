@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { navLinks, site } from '@/data/site'
 import { InstagramIcon } from './InstagramIcon'
+import { LogoMark } from './LogoMark'
 
 export function Footer() {
   return (
@@ -31,7 +32,7 @@ export function Footer() {
 
       <div className="mt-16 flex flex-col gap-8 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="bubble block size-7" />
+          <LogoMark className="size-8 text-lg" />
           <span className="font-serif text-xl">
             úklidová <em className="text-moss">guru</em>
           </span>

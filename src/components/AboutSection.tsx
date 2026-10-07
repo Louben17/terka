@@ -6,20 +6,21 @@ export function AboutSection() {
   return (
     <section id="o-mne" className="mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32">
       <div className="grid items-center gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
-        {/* Portrét – zatím monogram v bublině. Fotku stačí vložit jako /public/tereza.jpg a nahradit <span>. */}
-        <Reveal className="relative mx-auto aspect-square w-full max-w-md">
-          <div className="cover-sage absolute inset-0 rounded-full" />
-          <div className="bubble absolute inset-[6%]" />
-          <span className="absolute inset-0 flex items-center justify-center font-serif text-[11rem] leading-none text-white/80 italic sm:text-[14rem]">
-            T
-          </span>
-          <span className="bubble animate-float absolute -top-2 right-6 size-16" />
-          <span className="bubble animate-float absolute bottom-8 -left-4 size-10" style={{ animationDelay: '-5s' }} />
+        {/* Portrét – zatím monogram v oblouku. Fotku stačí vložit jako /public/tereza.jpg a nahradit <span>. */}
+        <Reveal className="relative mx-auto aspect-[4/5] w-full max-w-sm">
+          <div className="absolute inset-0 overflow-hidden rounded-t-full rounded-b-[2.5rem] bg-sage">
+            <span className="absolute -bottom-16 -left-16 size-56 rounded-full bg-mint" />
+            <span className="absolute inset-0 flex items-center justify-center pt-10 font-serif text-[12rem] leading-none text-cream italic sm:text-[15rem]">
+              T
+            </span>
+          </div>
+          <span className="animate-float absolute top-6 -right-4 size-14 rounded-full bg-sun" />
+          <span className="absolute bottom-24 -left-5 size-10 rounded-full bg-blush" />
           <a
             href={site.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="glass absolute right-0 bottom-6 flex items-center gap-2 rounded-full px-4 py-2.5 text-sm transition-transform hover:scale-105 sm:-right-4"
+            className="surface absolute right-0 bottom-6 flex items-center gap-2 rounded-full px-4 py-2.5 text-sm transition-colors hover:bg-mint sm:-right-6"
           >
             <InstagramIcon size={16} /> {site.instagramHandle}
           </a>
