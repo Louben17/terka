@@ -44,6 +44,9 @@ export function Bubbles({ dim = false }: { dim?: boolean }) {
           />
         ))}
       </div>
+
+      {/* Plynulý přechod do pozadí stránky */}
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-cream" />
     </div>
   )
 }

@@ -1,15 +1,29 @@
+import type { Metadata } from 'next'
+import { openGraph } from '@/lib/seo'
 import { AboutSection } from '@/components/AboutSection'
 import { ArticlesSection } from '@/components/ArticlesSection'
 import { ChallengeHero } from '@/components/ChallengeHero'
+import { FaqSection } from '@/components/FaqSection'
 import { GallerySection } from '@/components/GallerySection'
 import { HowItWorks } from '@/components/HowItWorks'
 import { InstagramSection } from '@/components/InstagramSection'
 import { Marquee } from '@/components/Marquee'
+import { site } from '@/data/site'
 import { getVyzvy, pragueDateKey } from '@/lib/vyzvy'
 
 // Výzvy se načítají na serveru a stránka se obnovuje nejpozději po 5 minutách
 // (po změně v administraci okamžitě díky revalidateTag).
 export const revalidate = 300
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+  openGraph: openGraph({
+    url: '/',
+    title: 'Úklidové výzvy a tipy na úklid domácnosti',
+    description: site.description,
+    images: [{ url: '/images/paticka-domov.jpg', width: 1536, height: 1024, alt: 'Uklizený obývací pokoj v podvečerním světle' }],
+  }),
+}
 
 function hash(input: string) {
   let h = 0
@@ -45,6 +59,7 @@ export default async function HomePage() {
       <ArticlesSection />
       <GallerySection />
       <AboutSection />
+      <FaqSection />
       <InstagramSection tips={rotated.slice(16, 22)} />
     </>
   )

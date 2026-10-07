@@ -31,12 +31,21 @@ Bez Supabase klíčů web funguje taky – použije záložní výzvy ze [src/da
 | `ADMIN_USERNAME` | přihlašovací jméno (výchozí `uklidovaguru`) |
 | `ADMIN_PASSWORD` | heslo do administrace (**povinné**) |
 | `ADMIN_SESSION_SECRET` | tajný klíč pro podpis session (když chybí, použije se service role klíč) |
+| `NEXT_PUBLIC_SITE_URL` | kanonická adresa webu (výchozí `https://www.uklidovaguru.cz`) |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | ověření v Google Search Console |
+
+## SEO
+
+- Kanonická doména je **www**. Canonical, sitemap i strukturovaná data se odvozují z `NEXT_PUBLIC_SITE_URL`.
+- `*.vercel.app` dostává hlavičku `X-Robots-Tag: noindex` (viz [next.config.ts](next.config.ts)), aby nevznikal duplicitní obsah.
+- Strukturovaná data: WebSite + Organization + Person (layout), FAQPage (homepage), BlogPosting + BreadcrumbList (články), CollectionPage (výpisy).
+- Nový článek: doplnit `seoTitulek` (do ~60 znaků), `seoPopis` (do ~155 znaků), `shrnuti` a `vyzvyFiltr`. Slug bez diakritiky s hlavním klíčovým slovem. Při změně slugu přidat 301 přesměrování do `next.config.ts`.
 
 ## Struktura
 
 ```
 src/
-  app/(site)/        veřejný web – homepage, /clanky, /clanky/[slug]
+  app/(site)/        veřejný web – homepage, /uklidove-vyzvy, /clanky, /clanky/[slug]
   app/admin, login   administrace výzev
   app/api/           auth + CRUD výzev
   components/        sekce a UI (ChallengeHero, Marquee, Bubbles…)

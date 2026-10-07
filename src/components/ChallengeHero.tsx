@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { ArrowLeft, ArrowRight, Check, Pause, Play, Share2, Sun } from 'lucide-react'
 import { Bubbles } from './Bubbles'
@@ -73,6 +74,8 @@ export function ChallengeHero({
   dateLabel: string
 }) {
   const [index, setIndex] = useState(dailyIndex)
+  // První vykreslení bez animace – text výzvy je hned vidět (rychlejší LCP pro Google).
+  const [animate, setAnimate] = useState(false)
   const [history, setHistory] = useState<number[]>([])
   const [autoplay, setAutoplay] = useState(false)
   const [bursts, setBursts] = useState<Burst[]>([])
@@ -92,17 +95,20 @@ export function ChallengeHero({
     if (deckRef.current.length === 0) deckRef.current = shuffledDeck(vyzvy.length, index)
     const nextIndex = deckRef.current.pop()!
     setHistory((h) => [...h.slice(-30), index])
+    setAnimate(true)
     setIndex(nextIndex)
   }, [index, vyzvy.length])
 
   const prev = useCallback(() => {
     if (history.length === 0) return
+    setAnimate(true)
     setIndex(history[history.length - 1])
     setHistory(history.slice(0, -1))
   }, [history])
 
   const backToDaily = () => {
     setHistory((h) => [...h, index])
+    setAnimate(true)
     setIndex(dailyIndex)
   }
 
@@ -175,7 +181,9 @@ export function ChallengeHero({
       <Bubbles />
 
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 pt-32 pb-12 text-center sm:px-6">
-        <h1 className="sr-only">Úklidová Guru – denní úklidové výzvy pro čistý domov</h1>
+        <h1 className="mb-5 text-xs font-medium tracking-[0.25em] text-ink-soft uppercase">
+          Úklidové výzvy na každý den
+        </h1>
 
         <motion.div
           initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
@@ -205,7 +213,7 @@ export function ChallengeHero({
                 <motion.span
                   key={`${word}-${i}`}
                   className="inline-block"
-                  initial={{ opacity: 0, y: 24, filter: 'blur(14px)' }}
+                  initial={animate ? { opacity: 0, y: 24, filter: 'blur(14px)' } : false}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   transition={{ duration: 0.7, delay: 0.05 * i, ease: [0.22, 1, 0.36, 1] }}
                 >
@@ -342,7 +350,9 @@ export function ChallengeHero({
 
       {/* Spodní lišta */}
       <div className="relative z-10 mx-auto flex w-full max-w-6xl items-end justify-center px-6 pb-8 sm:justify-between text-xs text-ink-soft">
-        <span className="hidden sm:block">{vyzvy.length} výzev v zásobníku</span>
+        <Link href="/uklidove-vyzvy" className="hidden underline-offset-4 hover:text-ink hover:underline sm:block">
+          Všech {vyzvy.length} výzev →
+        </Link>
         <a href="#jak-to-funguje" className="group flex flex-col items-center gap-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2">
           <span className="tracking-[0.2em] uppercase">Scroll</span>
           <span className="flex h-9 w-5 justify-center rounded-full border border-ink/30 pt-1.5">

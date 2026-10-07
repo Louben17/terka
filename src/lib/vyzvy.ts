@@ -9,7 +9,8 @@ export async function getVyzvy(): Promise<string[]> {
   try {
     const data = await fetchVyzvyPublic()
     const texts = data.map((v) => v.text?.trim()).filter((t): t is string => Boolean(t))
-    return texts.length > 0 ? texts : fallbackVyzvy
+    const unique = [...new Set(texts)]
+    return unique.length > 0 ? unique : fallbackVyzvy
   } catch (error) {
     console.error('Načtení výzev ze Supabase selhalo, používám záložní seznam:', error)
     return fallbackVyzvy

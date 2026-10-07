@@ -8,11 +8,21 @@ export type Blok =
   | { typ: 'varovani'; titulek: string; text: string }
 
 export interface Clanek {
+  /** URL článku – krátká, s klíčovými slovy, bez diakritiky */
   slug: string
   titulek: string
+  /** Titulek pro Google (do ~60 znaků), když se má lišit od nadpisu */
+  seoTitulek: string
+  /** Meta description (do ~155 znaků) */
+  seoPopis: string
   perex: string
+  /** Hlavní body článku – zobrazí se nahoře jako „Ve zkratce“ (dobré pro featured snippets) */
+  shrnuti: string[]
+  /** Regulární výraz pro výběr souvisejících výzev ze Supabase */
+  vyzvyFiltr: string
   kategorie: string
   datum: string // YYYY-MM-DD
+  upraveno: string // YYYY-MM-DD
   minutCteni: number
   /** Barevný motiv obálky – viz `.cover-*` v globals.css (podklad pod fotkou) */
   motiv: 'sage' | 'blush' | 'sun' | 'lilac'
@@ -24,12 +34,22 @@ export interface Clanek {
 
 export const clanky: Clanek[] = [
   {
-    slug: 'prirodni-cistice-ocet-soda-citron',
+    slug: 'ocet-jedla-soda-citron-na-uklid',
     titulek: 'Ocet, soda a citron: co přírodní čističe opravdu zvládnou',
+    seoTitulek: 'Ocet, jedlá soda a citron na úklid: kdy pomůžou a kdy škodí',
+    seoPopis: 'Jak uklízet octem, jedlou sodou a kyselinou citronovou. Kam ocet nepatří, proč nemíchat ocet se sodou a jak si sestavit přírodní úklidovou sadu.',
+    shrnuti: [
+      'Ocet rozpouští vodní kámen – ale nepatří na mramor, žulu ani nelakované dřevo.',
+      'Jedlá soda jemně drhne a pohlcuje pachy, soda na praní je silný odmašťovač.',
+      'Ocet se sodou se navzájem neutralizují – používejte je postupně, ne smíchané.',
+      'Kyseliny nikdy nemíchejte s chlórovými přípravky.',
+    ],
+    vyzvyFiltr: 'oct|soda|sod[ou]|citr|chemi|přírodn|ekolog|esenciál|recept',
     perex:
       'Tři suroviny z kuchyňské linky nahradí půlku drogerie. Jen je potřeba vědět, kam patří – a kam rozhodně ne.',
     kategorie: 'Přírodní úklid',
     datum: '2026-09-18',
+    upraveno: '2026-10-07',
     minutCteni: 6,
     motiv: 'sage',
     obrazek: '/images/clanek-prirodni-cistice.jpg',
@@ -88,12 +108,22 @@ export const clanky: Clanek[] = [
     ],
   },
   {
-    slug: 'desetiminutovy-uklid',
+    slug: 'rychly-uklid-za-10-minut',
     titulek: 'Desetiminutový úklid: pořádek bez celodenního drhnutí',
+    seoTitulek: 'Rychlý úklid za 10 minut denně: jednoduchá rutina',
+    seoPopis: 'Jak udržet pořádek bez celodenního drhnutí. Desetiminutová úklidová rutina, pravidlo jedné minuty a večerní reset krok za krokem.',
+    shrnuti: [
+      'Nastavte časovač na 10 minut a uklízejte jen jednu zónu.',
+      'Co zabere méně než minutu, udělejte hned.',
+      'Pětiminutový večerní reset vrátí byt do výchozího stavu.',
+      'Pravidelné krátké dávky porazí jeden velký víkendový úklid.',
+    ],
+    vyzvyFiltr: 'minut|časomír|rychl|večer|ráno|rutin|hudb|playlist|odměn|stůl|židl',
     perex:
       'Nejlepší úklid je ten, který se opravdu stane. Krátké, pravidelné dávky porazí jednu velkou sobotní akci.',
     kategorie: 'Rutiny',
     datum: '2026-08-27',
+    upraveno: '2026-10-07',
     minutCteni: 5,
     motiv: 'sun',
     obrazek: '/images/clanek-desetiminutovy.jpg',
@@ -133,12 +163,22 @@ export const clanky: Clanek[] = [
     ],
   },
   {
-    slug: 'kuchyn-krok-za-krokem',
+    slug: 'jak-uklidit-kuchyn',
     titulek: 'Kuchyň krok za krokem: od mikrovlnky po digestoř',
+    seoTitulek: 'Jak uklidit kuchyň: mikrovlnka, digestoř, dřez i lednice',
+    seoPopis: 'Postup úklidu kuchyně bez agresivní chemie: jak vyčistit mikrovlnku citronem, odmastit digestoř, odvápnit baterii a umýt lednici.',
+    shrnuti: [
+      'Mikrovlnku vyčistí miska vody s citronem – zapnout na 3–5 minut a setřít.',
+      'Tukové filtry digestoře namočte do horké vody se sodou na praní.',
+      'Baterii odvápníte utěrkou namočenou v ředěném octu.',
+      'Lednici umyjte vodou s jedlou sodou – neutralizuje pachy.',
+    ],
+    vyzvyFiltr: 'kuchy|lednic|mrazá|dřez|mikrovln|digesto|troub|sporák|varn|nádob|myčk|link|kávovar|konvic|spíž|potravin|koření|hrnc|pánv',
     perex:
       'Kuchyň je srdce domova a zároveň místo, kde se nejrychleji usazuje mastnota. Tady je postup, který ji zvládne bez agresivní chemie.',
     kategorie: 'Kuchyň',
     datum: '2026-07-30',
+    upraveno: '2026-10-07',
     minutCteni: 7,
     motiv: 'blush',
     obrazek: '/images/clanek-kuchyn.jpg',
@@ -181,12 +221,22 @@ export const clanky: Clanek[] = [
     ],
   },
   {
-    slug: 'minimalismus-bez-vycitek',
+    slug: 'jak-se-zbavit-veci',
     titulek: 'Jak se zbavit věcí bez výčitek',
+    seoTitulek: 'Jak se zbavit věcí bez výčitek: metoda tří krabic',
+    seoPopis: 'Minimalismus v praxi: jak třídit věci metodou tří krabic, kam s oblečením, knihami a elektrem a jak zastavit hromadění věcí doma.',
+    shrnuti: [
+      'Třiďte do tří krabic: nechat, darovat/prodat, vyhodit.',
+      'Každou věc vezměte do ruky a rozhodněte během pár vteřin.',
+      'Oblečení, knihy i elektro mají kam odejít – nevyhazujte je do směsného odpadu.',
+      'Pravidlo „jedna dovnitř, jedna ven“ zastaví hromadění.',
+    ],
+    vyzvyFiltr: 'daruj|vyhoď|vytřiď|roztřiď|zbav|minimal|bazar|sběrn|krabic|oblečení|nenosíš|kondo|méně|omez',
     perex:
       'Méně věcí znamená méně úklidu. Jak se rozloučit s tím, co už nepotřebujete – a dát tomu ještě druhý život.',
     kategorie: 'Minimalismus',
     datum: '2026-06-12',
+    upraveno: '2026-10-07',
     minutCteni: 5,
     motiv: 'lilac',
     obrazek: '/images/clanek-minimalismus.jpg',
