@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: PageProps<'/clanky/[slug]'>):
       description: clanek.perex,
       publishedTime: clanek.datum,
       authors: [site.author],
+      images: [{ url: clanek.obrazek, width: 1536, height: 1024, alt: clanek.obrazekAlt }],
     },
   }
 }
@@ -87,6 +88,7 @@ export default async function ClanekPage({ params }: PageProps<'/clanky/[slug]'>
             headline: clanek.titulek,
             description: clanek.perex,
             datePublished: clanek.datum,
+            image: `${site.url}${clanek.obrazek}`,
             inLanguage: 'cs',
             author: { '@type': 'Person', name: site.author, url: site.instagram },
             publisher: { '@type': 'Organization', name: site.name, url: site.url },
@@ -118,7 +120,12 @@ export default async function ClanekPage({ params }: PageProps<'/clanky/[slug]'>
       </header>
 
       <Reveal className="mx-auto mt-12 max-w-6xl px-4 sm:px-6">
-        <ArticleCover clanek={clanek} className="aspect-[21/9] rounded-[2rem]" />
+        <ArticleCover
+          clanek={clanek}
+          className="aspect-[4/3] rounded-[2rem] sm:aspect-[21/9]"
+          sizes="(min-width: 1152px) 1104px, 100vw"
+          priority
+        />
       </Reveal>
 
       <div className="mx-auto max-w-2xl space-y-6 px-4 py-16 text-lg leading-[1.75] text-ink-soft sm:px-6">

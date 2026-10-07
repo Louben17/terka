@@ -1,6 +1,7 @@
 import { AboutSection } from '@/components/AboutSection'
 import { ArticlesSection } from '@/components/ArticlesSection'
 import { ChallengeHero } from '@/components/ChallengeHero'
+import { GallerySection } from '@/components/GallerySection'
 import { HowItWorks } from '@/components/HowItWorks'
 import { InstagramSection } from '@/components/InstagramSection'
 import { Marquee } from '@/components/Marquee'
@@ -42,6 +43,7 @@ export default async function HomePage() {
       <HowItWorks count={vyzvy.length} />
       <Marquee items={rotated.slice(0, 16)} />
       <ArticlesSection />
+      <GallerySection />
       <AboutSection />
       <InstagramSection tips={rotated.slice(16, 22)} />
     </>

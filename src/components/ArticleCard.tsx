@@ -1,26 +1,31 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowUpRight, Clock } from 'lucide-react'
 import { type Clanek, formatDatum } from '@/data/clanky'
 
 export function ArticleCover({
   clanek,
   className = '',
-  small = false,
+  sizes = '(min-width: 1024px) 560px, 100vw',
+  priority = false,
 }: {
   clanek: Clanek
   className?: string
-  small?: boolean
+  sizes?: string
+  priority?: boolean
 }) {
   return (
-    <div className={`cover-${clanek.motiv} relative overflow-hidden ${className}`} aria-hidden="true">
-      <span className="bubble absolute top-[18%] left-[12%] size-24 opacity-90" />
-      <span className="bubble absolute right-[16%] bottom-[14%] size-36 opacity-80" />
-      <span className="bubble absolute top-[10%] right-[30%] size-10" />
-      <span
-        className={`absolute bottom-5 left-6 font-serif leading-none text-white/40 italic ${small ? 'text-6xl' : 'text-[5.5rem]'}`}
-      >
-        {clanek.kategorie.split(' ')[0]}
-      </span>
+    <div className={`cover-${clanek.motiv} relative overflow-hidden ${className}`}>
+      <Image
+        src={clanek.obrazek}
+        alt={clanek.obrazekAlt}
+        fill
+        sizes={sizes}
+        priority={priority}
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
+      <span aria-hidden="true" className="bubble absolute top-5 right-5 size-10 opacity-90" />
     </div>
   )
 }
@@ -46,7 +51,6 @@ export function ArticleCard({
       >
         <ArticleCover
           clanek={clanek}
-          small={horizontal}
           className={`transition-transform duration-700 group-hover:scale-105 ${
             featured
               ? 'aspect-[16/9] lg:aspect-auto lg:h-full'

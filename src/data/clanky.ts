@@ -14,8 +14,11 @@ export interface Clanek {
   kategorie: string
   datum: string // YYYY-MM-DD
   minutCteni: number
-  /** Barevný motiv obálky – viz `.cover-*` v globals.css */
+  /** Barevný motiv obálky – viz `.cover-*` v globals.css (podklad pod fotkou) */
   motiv: 'sage' | 'blush' | 'sun' | 'lilac'
+  /** Obálka v /public/images */
+  obrazek: string
+  obrazekAlt: string
   obsah: Blok[]
 }
 
@@ -29,6 +32,8 @@ export const clanky: Clanek[] = [
     datum: '2026-09-18',
     minutCteni: 6,
     motiv: 'sage',
+    obrazek: '/images/clanek-prirodni-cistice.jpg',
+    obrazekAlt: 'Skleněný rozprašovač, ocet, jedlá soda a citrony na lněném ubrusu',
     obsah: [
       {
         typ: 'odstavec',
@@ -91,6 +96,8 @@ export const clanky: Clanek[] = [
     datum: '2026-08-27',
     minutCteni: 5,
     motiv: 'sun',
+    obrazek: '/images/clanek-desetiminutovy.jpg',
+    obrazekAlt: 'Uklizený obývací pokoj s přesýpacími hodinami na konferenčním stolku',
     obsah: [
       {
         typ: 'odstavec',
@@ -134,6 +141,8 @@ export const clanky: Clanek[] = [
     datum: '2026-07-30',
     minutCteni: 7,
     motiv: 'blush',
+    obrazek: '/images/clanek-kuchyn.jpg',
+    obrazekAlt: 'Čistá kuchyň se šalvějově zelenými skříňkami a miskou citronů',
     obsah: [
       {
         typ: 'odstavec',
@@ -180,6 +189,8 @@ export const clanky: Clanek[] = [
     datum: '2026-06-12',
     minutCteni: 5,
     motiv: 'lilac',
+    obrazek: '/images/clanek-minimalismus.jpg',
+    obrazekAlt: 'Tři krabice s poskládaným oblečením před uspořádanou šatní skříní',
     obsah: [
       {
         typ: 'odstavec',

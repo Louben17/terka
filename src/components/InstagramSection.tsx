@@ -1,9 +1,17 @@
+import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { site } from '@/data/site'
 import { InstagramIcon } from './InstagramIcon'
 import { Reveal } from './Reveal'
 
-const tones = ['cover-sage', 'cover-blush', 'cover-sun', 'cover-lilac', 'cover-blush', 'cover-sage']
+const fotky = [
+  '/images/galerie-pomocnici.jpg',
+  '/images/galerie-loznice.jpg',
+  '/images/clanek-prirodni-cistice.jpg',
+  '/images/galerie-koupelna.jpg',
+  '/images/clanek-kuchyn.jpg',
+  '/images/galerie-pradlo.jpg',
+]
 
 export function InstagramSection({ tips }: { tips: string[] }) {
   return (
@@ -54,10 +62,17 @@ export function InstagramSection({ tips }: { tips: string[] }) {
                 {[tips[col], tips[col + 3]].filter(Boolean).map((tip, row) => (
                   <div
                     key={tip}
-                    className={`${tones[col + row * 3]} group relative flex aspect-[4/5] items-end overflow-hidden rounded-2xl p-3 transition-transform duration-500 hover:z-10 hover:scale-105 sm:p-4`}
+                    className="group relative flex aspect-[4/5] items-end overflow-hidden rounded-2xl bg-moss p-3 transition-transform duration-500 hover:z-10 hover:scale-105 sm:p-4"
                   >
-                    <span className="bubble absolute top-3 right-3 size-8 opacity-80" />
-                    <p className="relative font-serif text-base leading-tight text-ink sm:text-xl">{tip}</p>
+                    <Image
+                      src={fotky[col + row * 3]}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 180px, 30vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
+                    <p className="relative font-serif text-sm leading-tight text-cream sm:text-lg">{tip}</p>
                     <span className="absolute inset-0 flex items-center justify-center bg-ink/40 text-cream opacity-0 transition-opacity group-hover:opacity-100">
                       <InstagramIcon size={28} />
                     </span>

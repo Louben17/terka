@@ -34,11 +34,13 @@ export const metadata: Metadata = {
     description: site.description,
     locale: 'cs_CZ',
     siteName: site.name,
+    images: [{ url: '/images/paticka-domov.jpg', width: 1536, height: 1024, alt: 'Uklizený obývací pokoj v podvečerním světle' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Úklidová Guru – Denní úklidové výzvy',
     description: site.description,
+    images: ['/images/paticka-domov.jpg'],
   },
   icons: { icon: '/favicon.ico' },
   manifest: '/site.webmanifest',

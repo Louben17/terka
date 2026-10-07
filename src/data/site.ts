@@ -12,5 +12,6 @@ export const navLinks = [
   { href: '/#vyzva', label: 'Výzva' },
   { href: '/#jak-to-funguje', label: 'Jak to funguje' },
   { href: '/clanky', label: 'Články' },
+  { href: '/#inspirace', label: 'Inspirace' },
   { href: '/#o-mne', label: 'O mně' },
 ]
