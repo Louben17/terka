@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft, Lock } from 'lucide-react'
+import { Bubbles } from '@/components/Bubbles'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -15,20 +17,18 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-
     try {
       const response = await fetch('/api/auth', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       })
-
       if (response.ok) {
         router.push('/admin')
+        router.refresh()
       } else {
-        setError('Nesprávné přihlašovací údaje')
+        const data = await response.json().catch(() => ({}))
+        setError(data.error || 'Nesprávné přihlašovací údaje')
       }
     } catch {
       setError('Chyba při přihlašování')
@@ -37,79 +37,65 @@ export default function LoginPage() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 flex items-center justify-center p-8">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif text-gray-800 mb-2">
-            🌿 Admin přihlášení
-          </h1>
-          <p className="text-gray-600 font-serif">
-            Úklidová Guru - Administrace
-          </p>
-        </div>
+  const inputClass =
+    'w-full rounded-2xl border border-line bg-white/70 px-4 py-3 text-ink outline-none transition focus:border-moss focus:ring-4 focus:ring-sage/30'
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+  return (
+    <main className="relative flex min-h-svh items-center justify-center overflow-hidden p-4">
+      <Bubbles dim />
+      <div className="glass relative w-full max-w-md rounded-[2rem] p-8 sm:p-10">
+        <span className="flex size-12 items-center justify-center rounded-2xl bg-ink text-cream">
+          <Lock size={20} />
+        </span>
+        <h1 className="mt-6 font-serif text-4xl tracking-tight">
+          Administrace <em className="text-moss">výzev</em>
+        </h1>
+        <p className="mt-2 text-ink-soft">Úklidová Guru</p>
+
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
-            <label 
-              htmlFor="username" 
-              className="block text-sm font-serif text-gray-700 mb-2"
-            >
+            <label htmlFor="username" className="mb-1.5 block text-sm text-ink-soft">
               Uživatelské jméno
             </label>
             <input
               id="username"
-              type="text"
+              autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent font-serif"
-              placeholder="Zadejte uživatelské jméno"
+              className={inputClass}
               required
             />
           </div>
-
           <div>
-            <label 
-              htmlFor="password" 
-              className="block text-sm font-serif text-gray-700 mb-2"
-            >
+            <label htmlFor="password" className="mb-1.5 block text-sm text-ink-soft">
               Heslo
             </label>
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent font-serif"
-              placeholder="Zadejte heslo"
+              className={inputClass}
               required
             />
           </div>
 
-          {error && (
-            <div className="text-red-600 text-sm font-serif text-center">
-              {error}
-            </div>
-          )}
+          {error && <p className="rounded-xl bg-blush/70 px-4 py-2 text-sm text-[#7a3a27]">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-4 rounded-lg font-serif hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-full bg-ink py-3.5 text-cream transition hover:bg-moss disabled:opacity-50"
           >
-            {loading ? 'Přihlašuji...' : 'Přihlásit se'}
+            {loading ? 'Přihlašuji…' : 'Přihlásit se'}
           </button>
         </form>
 
-        <div className="mt-8 text-center">
-          <Link
-            href="/"
-            className="text-gray-600 hover:text-gray-800 font-serif text-sm transition-colors"
-          >
-            ← Zpět na hlavní stránku
-          </Link>
-        </div>
+        <Link href="/" className="mt-8 inline-flex items-center gap-2 text-sm text-ink-soft hover:text-ink">
+          <ArrowLeft size={14} /> Zpět na web
+        </Link>
       </div>
-    </div>
+    </main>
   )
 }

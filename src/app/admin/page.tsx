@@ -1,305 +1,236 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Edit2, Trash2, LogOut, Save, X } from 'lucide-react'
+import { Check, ExternalLink, LogOut, Pencil, Plus, Search, Trash2, X } from 'lucide-react'
 
 interface Vyzva {
   text: string
   autor: string | null
-  // Bez ID - budeme používat text jako identifikátor
 }
 
+// Tabulka nemá ID sloupec, výzvy se proto identifikují svým textem.
 export default function AdminPage() {
   const [vyzvy, setVyzvy] = useState<Vyzva[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [newVyzva, setNewVyzva] = useState('')
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editingText, setEditingText] = useState('')
-  const [editingOriginalText, setEditingOriginalText] = useState('') // Pro identifikaci při editaci
+  const [editing, setEditing] = useState<{ original: string; text: string } | null>(null)
+  const [query, setQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const router = useRouter()
 
-  // Načtení výzev
-  const loadVyzvy = useCallback(async () => {
-    try {
-      const response = await fetch('/api/admin/vyzvy')
+  const api = useCallback(
+    async (method: string, body?: unknown) => {
+      const response = await fetch('/api/admin/vyzvy', {
+        method,
+        headers: body ? { 'Content-Type': 'application/json' } : undefined,
+        body: body ? JSON.stringify(body) : undefined,
+      })
       if (response.status === 401) {
         router.push('/login')
-        return
+        throw new Error('Nepřihlášeno')
       }
-      if (response.ok) {
-        const data = await response.json()
-        setVyzvy(data)
-      }
-    } catch {
-      console.error('Chyba při načítání výzev')
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.error || 'Neznámá chyba')
+      return data
+    },
+    [router]
+  )
+
+  const load = useCallback(async () => {
+    try {
+      setVyzvy(await api('GET'))
+      setError('')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Chyba při načítání')
     } finally {
       setLoading(false)
     }
-  }, [router])
+  }, [api])
 
   useEffect(() => {
-    loadVyzvy()
-  }, [loadVyzvy])
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- načtení dat při otevření stránky
+    load()
+  }, [load])
 
-  // Přidání nové výzvy
-  const handleAddVyzva = async (e: React.FormEvent) => {
+  const run = async (action: () => Promise<unknown>) => {
+    setSaving(true)
+    try {
+      await action()
+      await load()
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Chyba')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleAdd = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newVyzva.trim() || saving) return
-
-    setSaving(true)
-    try {
-      const response = await fetch('/api/admin/vyzvy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: newVyzva }),
-      })
-
-      if (response.ok) {
-        setNewVyzva('')
-        loadVyzvy()
-      } else {
-        alert('Chyba při přidávání výzvy')
-      }
-    } catch {
-      alert('Chyba při přidávání výzvy')
-    } finally {
-      setSaving(false)
-    }
+    if (!newVyzva.trim()) return
+    run(async () => {
+      await api('POST', { text: newVyzva })
+      setNewVyzva('')
+    })
   }
 
-  // Editace výzvy
-  const handleEditVyzva = async (originalText: string) => {
-    if (!editingText.trim() || saving) return
-
-    setSaving(true)
-    try {
-      const response = await fetch('/api/admin/vyzvy', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          originalText: originalText, 
-          newText: editingText 
-        }),
-      })
-
-      if (response.ok) {
-        setEditingId(null)
-        setEditingText('')
-        setEditingOriginalText('')
-        loadVyzvy()
-      } else {
-        const errorData = await response.json()
-        alert(`Chyba při aktualizaci výzvy: ${errorData.error || 'Neznámá chyba'}`)
-      }
-    } catch {
-      alert('Chyba při aktualizaci výzvy')
-    } finally {
-      setSaving(false)
-    }
+  const handleSave = () => {
+    if (!editing?.text.trim()) return
+    run(async () => {
+      await api('PUT', { originalText: editing.original, newText: editing.text })
+      setEditing(null)
+    })
   }
 
-  // Smazání výzvy
-  const handleDeleteVyzva = async (text: string) => {
-    console.log('Delete clicked, text:', text)
+  const handleDelete = (text: string) => {
     if (!confirm('Opravdu chcete smazat tuto výzvu?')) return
-
-    try {
-      const response = await fetch(`/api/admin/vyzvy`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: text })
-      })
-
-      console.log('Delete response:', response.status)
-
-      if (response.ok) {
-        loadVyzvy()
-      } else {
-        const errorData = await response.json()
-        console.error('Delete error response:', errorData)
-        alert(`Chyba při mazání výzvy: ${errorData.error || 'Neznámá chyba'}`)
-      }
-    } catch {
-      alert('Chyba při mazání výzvy')
-    }
+    run(() => api('DELETE', { text }))
   }
 
-  // Odhlášení
   const handleLogout = async () => {
-    try {
-      await fetch('/api/auth', { method: 'DELETE' })
-      router.push('/login')
-    } catch {
-      router.push('/login')
-    }
+    await fetch('/api/auth', { method: 'DELETE' }).catch(() => {})
+    router.push('/login')
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
-        <div className="text-center">
-          <div className="animate-pulse text-gray-400 text-lg font-serif">
-            Načítám administraci...
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return vyzvy.map((v, i) => ({ ...v, poradi: i + 1 })).filter((v) => !q || v.text.toLowerCase().includes(q))
+  }, [vyzvy, query])
+
+  const textareaClass =
+    'w-full resize-none rounded-2xl border border-line bg-white px-4 py-3 outline-none transition focus:border-moss focus:ring-4 focus:ring-sage/30'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-serif text-gray-800 mb-2">
-                🌿 Administrace výzev
-              </h1>
-              <p className="text-gray-600 font-serif">
-                Úklidová Guru - {vyzvy.length} výzev celkem
-              </p>
-            </div>
-            <div className="flex gap-4">
-              <Link
-                href="/"
-                className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg font-serif text-gray-700 transition-colors"
-              >
-                Zobrazit web
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg font-serif transition-colors"
-              >
-                <LogOut size={16} />
-                Odhlásit se
-              </button>
-            </div>
+    <main className="min-h-svh px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-4xl">
+        <header className="flex flex-col gap-4 rounded-[2rem] bg-moss-deep p-6 text-cream sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div>
+            <h1 className="font-serif text-4xl tracking-tight">
+              Administrace <em className="text-sage">výzev</em>
+            </h1>
+            <p className="mt-1 text-cream/70">{loading ? 'Načítám…' : `${vyzvy.length} výzev celkem`}</p>
           </div>
-        </div>
-
-        {/* Formulář pro přidání nové výzvy */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
-          <h2 className="text-xl font-serif text-gray-800 mb-4 flex items-center gap-2">
-            <Plus size={20} />
-            Přidat novou výzvu
-          </h2>
-          
-          <form onSubmit={handleAddVyzva} className="space-y-4">
-            <textarea
-              value={newVyzva}
-              onChange={(e) => setNewVyzva(e.target.value)}
-              placeholder="Zadejte text nové výzvy..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent font-serif resize-none"
-              rows={3}
-              required
-            />
-            <button
-              type="submit"
-              disabled={saving || !newVyzva.trim()}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg font-serif hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          <div className="flex gap-2">
+            <Link
+              href="/"
+              target="_blank"
+              className="flex items-center gap-2 rounded-full bg-cream/10 px-4 py-2 text-sm transition hover:bg-cream/20"
             >
-              {saving ? 'Ukládám...' : 'Přidat výzvu'}
+              <ExternalLink size={14} /> Web
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 rounded-full bg-cream px-4 py-2 text-sm text-ink transition hover:bg-white"
+            >
+              <LogOut size={14} /> Odhlásit
             </button>
-          </form>
-        </div>
+          </div>
+        </header>
 
-        {/* Seznam existujících výzev */}
-        <div className="bg-white rounded-2xl shadow-xl p-6">
-          <h2 className="text-xl font-serif text-gray-800 mb-6">
-            Existující výzvy
+        {error && <p className="mt-6 rounded-2xl bg-blush px-5 py-3 text-sm text-[#7a3a27]">{error}</p>}
+
+        <form onSubmit={handleAdd} className="mt-6 rounded-[2rem] border border-line bg-paper p-6 sm:p-8">
+          <h2 className="flex items-center gap-2 font-serif text-2xl">
+            <Plus size={20} /> Nová výzva
           </h2>
+          <textarea
+            value={newVyzva}
+            onChange={(e) => setNewVyzva(e.target.value)}
+            placeholder="Např. Vytři prach na parapetech a zalij květiny."
+            className={`${textareaClass} mt-4`}
+            rows={2}
+            required
+          />
+          <button
+            type="submit"
+            disabled={saving || !newVyzva.trim()}
+            className="mt-3 rounded-full bg-ink px-6 py-2.5 text-cream transition hover:bg-moss disabled:opacity-40"
+          >
+            {saving ? 'Ukládám…' : 'Přidat výzvu'}
+          </button>
+        </form>
 
-          {vyzvy.length === 0 ? (
-            <p className="text-gray-500 font-serif text-center py-8">
-              Zatím nejsou žádné výzvy.
-            </p>
+        <section className="mt-6 rounded-[2rem] border border-line bg-paper p-6 sm:p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="font-serif text-2xl">Všechny výzvy</h2>
+            <label className="flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm">
+              <Search size={14} className="text-ink-soft" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Hledat…"
+                className="w-40 bg-transparent outline-none"
+              />
+            </label>
+          </div>
+
+          {loading ? (
+            <div className="mt-6 space-y-3">
+              {Array.from({ length: 5 }, (_, i) => (
+                <div key={i} className="h-16 animate-pulse rounded-2xl bg-line/60" />
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
+            <p className="py-10 text-center text-ink-soft">Žádné výzvy.</p>
           ) : (
-            <div className="space-y-4">
-              {vyzvy.map((vyzva, index) => (
-                <div
-                  key={`${vyzva.text}-${index}`}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  {editingId === vyzva.text ? (
-                    // Editační režim
+            <ul className="mt-6 divide-y divide-line">
+              {filtered.map((v) => (
+                <li key={`${v.text}-${v.poradi}`} className="py-4">
+                  {editing?.original === v.text ? (
                     <div className="space-y-3">
                       <textarea
-                        value={editingText}
-                        onChange={(e) => setEditingText(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-pink-500 font-serif resize-none"
-                        rows={3}
+                        value={editing.text}
+                        onChange={(e) => setEditing({ ...editing, text: e.target.value })}
+                        className={textareaClass}
+                        rows={2}
+                        autoFocus
                       />
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleEditVyzva(editingOriginalText)}
+                          onClick={handleSave}
                           disabled={saving}
-                          className="flex items-center gap-1 bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded font-serif text-sm transition-colors"
+                          className="flex items-center gap-1.5 rounded-full bg-moss px-4 py-1.5 text-sm text-cream disabled:opacity-50"
                         >
-                          <Save size={14} />
-                          Uložit
+                          <Check size={14} /> Uložit
                         </button>
                         <button
-                          onClick={() => {
-                            setEditingId(null)
-                            setEditingText('')
-                            setEditingOriginalText('')
-                          }}
-                          className="flex items-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded font-serif text-sm transition-colors"
+                          onClick={() => setEditing(null)}
+                          className="flex items-center gap-1.5 rounded-full bg-line px-4 py-1.5 text-sm"
                         >
-                          <X size={14} />
-                          Zrušit
+                          <X size={14} /> Zrušit
                         </button>
                       </div>
                     </div>
                   ) : (
-                    // Zobrazovací režim
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="text-gray-800 font-serif leading-relaxed mb-2">
-                          &ldquo;{vyzva.text}&rdquo;
-                        </p>
-                        <p className="text-xs text-gray-500 font-serif">
-                          Pozice: {index + 1}
-                        </p>
-                      </div>
-                      <div className="flex gap-2 ml-4">
+                    <div className="group flex items-start gap-4">
+                      <span className="mt-0.5 w-8 shrink-0 font-mono text-xs text-ink-soft/60">{v.poradi}</span>
+                      <p className="flex-1 leading-relaxed">{v.text}</p>
+                      <div className="flex shrink-0 gap-1 opacity-60 transition group-hover:opacity-100">
                         <button
-                          onClick={() => {
-                            setEditingId(vyzva.text)
-                            setEditingText(vyzva.text)
-                            setEditingOriginalText(vyzva.text)
-                          }}
-                          className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-serif text-sm transition-colors"
+                          onClick={() => setEditing({ original: v.text, text: v.text })}
+                          className="rounded-full p-2 hover:bg-mint"
+                          aria-label="Upravit"
                         >
-                          <Edit2 size={14} />
-                          Editovat
+                          <Pencil size={15} />
                         </button>
                         <button
-                          onClick={() => handleDeleteVyzva(vyzva.text)}
-                          className="flex items-center gap-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded font-serif text-sm transition-colors"
+                          onClick={() => handleDelete(v.text)}
+                          className="rounded-full p-2 text-[#a4533b] hover:bg-blush"
+                          aria-label="Smazat"
                         >
-                          <Trash2 size={14} />
-                          Smazat
+                          <Trash2 size={15} />
                         </button>
                       </div>
                     </div>
                   )}
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </div>
+        </section>
       </div>
-    </div>
+    </main>
   )
 }

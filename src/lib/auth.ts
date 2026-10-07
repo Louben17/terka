@@ -1,14 +1,8 @@
+import 'server-only'
 import { cookies } from 'next/headers'
+import { SESSION_COOKIE, verifySessionToken } from './session'
 
-export async function isAuthenticated(): Promise<boolean> {
+export async function isAuthenticated() {
   const cookieStore = await cookies()
-  const session = cookieStore.get('admin-session')
-  return session?.value === 'authenticated'
-}
-
-export async function requireAuth() {
-  const authenticated = await isAuthenticated()
-  if (!authenticated) {
-    throw new Error('Unauthorized')
-  }
+  return verifySessionToken(cookieStore.get(SESSION_COOKIE)?.value)
 }

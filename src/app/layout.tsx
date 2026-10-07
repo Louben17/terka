@@ -1,98 +1,72 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
+import { Inter, Instrument_Serif } from 'next/font/google'
+import { site } from '@/data/site'
 import './globals.css'
 
+const inter = Inter({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const instrument = Instrument_Serif({
+  subsets: ['latin', 'latin-ext'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-instrument',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
-  title: 'Úklidová Guru - Motivační výzvy pro čistý domov',
-  description: 'Denní inspirace pro úklid a pořádek. Objevte radost z úklidu s motivačními výzvami od Terezy @uklidovaguru.',
-  keywords: 'úklid, motivace, výzvy, domácnost, pořádek, úklidová guru',
-  authors: [{ name: 'Úklidová Guru Tereza' }],
-  viewport: 'width=device-width, initial-scale=1.0',
-  robots: 'index, follow',
-  themeColor: '#f9fafb',
-  alternates: {
-    canonical: 'https://uklidovaguru.cz',
+  metadataBase: new URL(site.url),
+  title: {
+    default: 'Úklidová Guru – Denní úklidové výzvy a tipy pro čistý domov',
+    template: '%s · Úklidová Guru',
   },
+  description: site.description,
+  keywords: ['úklid', 'úklidové výzvy', 'úklidové tipy', 'přírodní čističe', 'ekologický úklid', 'pořádek', 'úklidová guru'],
+  authors: [{ name: 'Tereza – Úklidová Guru', url: site.instagram }],
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
-    url: 'https://uklidovaguru.cz',
-    title: 'Úklidová Guru - Motivační výzvy pro čistý domov',
-    description: 'Denní inspirace pro úklid a pořádek. Objevte radost z úklidu s motivačními výzvami.',
-    images: [
-      {
-        url: 'https://uklidovaguru.cz/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Úklidová Guru - Motivační výzvy pro úklid',
-      },
-    ],
+    url: site.url,
+    title: 'Úklidová Guru – Denní úklidové výzvy',
+    description: site.description,
     locale: 'cs_CZ',
-    siteName: 'Úklidová Guru',
+    siteName: site.name,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Úklidová Guru - Motivační výzvy pro čistý domov',
-    description: 'Denní inspirace pro úklid a pořádek. Objevte radost z úklidu s motivačními výzvami.',
-    images: ['https://uklidovaguru.cz/og-image.jpg'],
+    title: 'Úklidová Guru – Denní úklidové výzvy',
+    description: site.description,
   },
-  icons: {
-    icon: '/favicon.ico?v=2',
-    apple: '/apple-touch-icon.png',
-  },
+  icons: { icon: '/favicon.ico' },
   manifest: '/site.webmanifest',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export const viewport: Viewport = {
+  themeColor: '#f6f2ea',
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="cs">
-      <head>
+    <html lang="cs" className={`${inter.variable} ${instrument.variable}`}>
+      <body className="grain font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "Úklidová Guru",
-              "description": "Motivační výzvy a inspirace pro úklid domácnosti",
-              "url": "https://uklidovaguru.cz",
-              "author": {
-                "@type": "Person",
-                "name": "Tereza",
-                "sameAs": ["https://www.instagram.com/uklidovaguru/"]
-              },
-              "mainEntity": {
-                "@type": "Article",
-                "headline": "Denní motivační výzvy pro úklid",
-                "description": "Získejte každý den novou inspiraci pro úklid a pořádek v domácnosti",
-                "author": {
-                  "@type": "Person",
-                  "name": "Tereza"
-                }
-              },
-              "potentialAction": {
-                "@type": "ReadAction",
-                "target": "https://uklidovaguru.cz"
-              }
-            })
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: site.name,
+              description: site.description,
+              url: site.url,
+              inLanguage: 'cs',
+              author: { '@type': 'Person', name: site.author, sameAs: [site.instagram] },
+            }),
           }}
         />
-      </head>
-      <body>
-        <header style={{ display: 'none' }}>
-          <h1>Úklidová Guru - Motivační výzvy pro čistý domov</h1>
-          <nav>
-            <a href="https://www.instagram.com/uklidovaguru/">Instagram @uklidovaguru</a>
-          </nav>
-        </header>
-        <main>
-          {children}
-        </main>
-        <footer style={{ display: 'none' }}>
-          <p>© 2025 Úklidová Guru Tereza - Motivace pro čistý domov</p>
-        </footer>
+        {children}
       </body>
     </html>
   )

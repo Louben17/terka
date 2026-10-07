@@ -1,16 +1,10 @@
 {
   "name": "Úklidová Guru",
-  "short_name": "ÚklidGuru",
-  "description": "Motivační výzvy pro čistý domov",
-  "icons": [
-    {
-      "src": "/favicon.ico",
-      "sizes": "32x32",
-      "type": "image/x-icon"
-    }
-  ],
-  "theme_color": "#f9fafb",
-  "background_color": "#fdf2f8",
+  "short_name": "Úklidová Guru",
+  "description": "Denní úklidové výzvy a tipy pro čistý domov",
+  "icons": [{ "src": "/favicon.ico", "sizes": "32x32", "type": "image/x-icon" }],
+  "theme_color": "#f6f2ea",
+  "background_color": "#f6f2ea",
   "display": "standalone",
   "start_url": "/",
   "scope": "/"
